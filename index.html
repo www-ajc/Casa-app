@@ -99,7 +99,7 @@ body.escuro .alert-item.warn{background:#2a2314} body.escuro .alert-item.bad{bac
   <div class="a11y" id="a11y"></div>
 </header>
 <main id="main"></main>
-<footer>Dados guardados localmente neste browser · Faz backups regulares (Definições → Exportar)</footer>
+<footer>Dados guardados localmente e sincronizados na nuvem · Backups em Definições → Exportar · <span id="appv"></span></footer>
 <input type="file" id="importFile" accept=".json" style="display:none">
 <script>
 "use strict";
@@ -122,7 +122,7 @@ function aplicarPrefs(){
 }
 function gravarPrefs(){localStorage.setItem(PREFS_KEY,JSON.stringify(PREFS));aplicarPrefs();}
 aplicarPrefs();
-const SEED_V="2026-08-06.18"; // versão dos dados publicados pelo Claude — incrementar a cada atualização
+const SEED_V="2026-08-07.21"; // versão dos dados publicados pelo Claude — incrementar a cada atualização
 const DEFAULTS={
   tarifaKwh:0.17,
   categorias:["Cozinha","Lavandaria","Climatização e águas","Exterior","Entretenimento","Informática e mobilidade","Pequenos eletrodomésticos","Outros"],
@@ -157,7 +157,17 @@ function seed(){
       siteRegisto:"https://www.siemens-home.bsh-group.com/pt/apoio-ao-consumidor/apoio",
       rede:"Wi-Fi",appFabricante:"Home Connect",apiDisponivel:"Sim — Home Connect API",compatibilidades:"Home Assistant, Alexa, Google Home",estadoIot:"Não ligado",
       manutencoes:[{tarefa:"Repor sal e abrilhantador",freqMeses:1,ultima:"",consumivel:""},{tarefa:"Limpar filtro",freqMeses:3,ultima:"",consumivel:""}]}),
-    mk("Máquina de lavar roupa","Lavandaria","Grande eletrodoméstico","Lavandaria",[{tarefa:"Limpar filtro e gaveta detergente",freqMeses:3,ultima:"",consumivel:""},{tarefa:"Ciclo de limpeza 90°",freqMeses:2,ultima:"",consumivel:""}]),
+    novoEquip({nome:"Máquina de lavar roupa",categoria:"Lavandaria",tipo:"Grande eletrodoméstico",compartimento:"Lavandaria",utilidade:"Máquina de lavar roupa de carga frontal",
+      marca:"Miele",modelo:"W1 WCB680 WCS 125 Edition (TwinDos & Steam, 8 kg)",referencia:"M.No 12486480 · Type HW20-W · Edição 125 anos Miele",numeroSerie:"60/188093814",
+      caracteristicas:"Carga frontal 8 kg · 1400 rpm · TwinDos (doseamento automático de detergente UltraPhase 1 e 2) · Vapor (alisar extra/SteamCare) · Programas: ECO 40-60, Algodão, Fibras, Roupa delicada, Lãs, Expresso 20, Roupa escura/Gangas, Camisas, Refrescar · MobileStart (controlo remoto pela app Miele) · Fabricante: Miele & Cie. KG",
+      classeEnergetica:"A",consumoAnualKwh:95,consumoCicloKwh:0.43,ligacoes:"220–240 V~ · 50 Hz · Ligação de água fria",notas:"Etiqueta UE: 43 kWh por 100 ciclos (classe A) — anual ≈ 95 kWh (~220 ciclos/ano).",
+      comoFazer:"TwinDos: substituir os cartuchos UltraPhase quando a app/visor avisar. MobileStart: emparelhar com a app Miele (Wi-Fi).",
+      links:[{label:"Página do produto (Miele PT — pesquisar WCB680)",url:"https://www.miele.pt"},{label:"Miele Service (manuais, assistência)",url:"https://www.miele.pt/domestic/apoio-ao-cliente-385.htm"},{label:"App Miele",url:"https://www.miele.pt/domestic/aplicacao-miele-2589.htm"}],
+      contactoFabricante:"Miele Portugal · Av. do Forte 5, 2790-073 Carnaxide",
+      contactoAssistencia:"Miele PT: 21 424 81 00 · www.miele.pt/service",
+      siteRegisto:"https://www.miele.pt/domestic/registo-do-aparelho-2653.htm",
+      rede:"Wi-Fi",appFabricante:"Miele (MobileStart)",apiDisponivel:"Sim — Miele 3rd Party API (integração Home Assistant)",compatibilidades:"Home Assistant, Alexa, Google Home",estadoIot:"Não ligado",
+      manutencoes:[{tarefa:"Limpar filtro e gaveta do detergente",freqMeses:3,ultima:"",consumivel:""},{tarefa:"Ciclo de limpeza a 90° (ou programa Manutenção)",freqMeses:2,ultima:"",consumivel:""},{tarefa:"Substituir cartuchos TwinDos",freqMeses:2,ultima:"",consumivel:"Miele UltraPhase 1 + 2"}]}),
     novoEquip({nome:"Máquina de secar roupa",categoria:"Lavandaria",tipo:"Grande eletrodoméstico",compartimento:"Lavandaria",
       marca:"Miele",modelo:"TCC364WP (T1, bomba de calor)",referencia:"Type HT30-W · M.No 12130600 · Branco lótus",numeroSerie:"50/178626224",
       caracteristicas:"Máquina de secar com bomba de calor · 9 kg · EcoDry (permutador sem manutenção) · Motor ProfiEco · PerfectDry · Programa algodão standard: 215 min · Ruído 66 dB(A)",
@@ -196,9 +206,9 @@ function seed(){
     novoEquip({nome:"Forno 90 cm",categoria:"Cozinha",tipo:"Grande eletrodoméstico",compartimento:"Cozinha",utilidade:"Forno principal 90 cm, pirolítico",
       marca:"Siemens (iQ500)",modelo:"VB578D0S0/08",referencia:"Type PO9.60 · FD 0503 (fab. mar/2025) · Z-Nr 001964",numeroSerie:"Z-Nr 001964 (nº série completo na fatura/DataMatrix)",
       caracteristicas:"Forno integrável 90×60 cm (89,6×59,4×57 cm) · 112 L · 10 modos de cozedura (ar quente 4D, convecção, grelhador grande área, pizza, descongelação…) · 50–280 °C · Limpeza pirolítica · Inox/preto · Fabricante: BSH Hausgeräte GmbH, Made in Germany",
-      classeEnergetica:"A+",consumoCicloKwh:0.83,
+      classeEnergetica:"A+",consumoAnualKwh:85,consumoCicloKwh:0.83,
       ligacoes:"220–240 / 380–415 V 3N~ · 50–60 Hz · 4,2 kW",
-      notas:"Consumo por ciclo (ficha comercial): 0,83 kWh convencional · 1,4 kWh convecção forçada.",
+      notas:"Consumo por ciclo (ficha comercial): 0,83 kWh convencional · 1,4 kWh convecção forçada. Anual ≈ 85 kWh (estimativa, ~2 utilizações/semana).",
       links:[{label:"Ficha do produto (Darty PT)",url:"https://darty.pt/products/forno-eletrico-encastravel-siemens-vb578d0s0-iq500-90x60-cm-a-inox-preto-4242003803349"},{label:"Manuais e apoio (pesquisar E-Nr)",url:"https://www.siemens-home.bsh-group.com/pt/apoio-ao-consumidor/apoio"},{label:"Agendar reparação",url:"https://www.siemens-home.bsh-group.com/pt/apoio-ao-consumidor/reparacao/agendar-reparacao"}],
       contactoFabricante:"BSH/Siemens PT · Rua do Alto do Montijo 15, 2790-012 Carnaxide",
       contactoAssistencia:"214 250 720 · peças: bshp.pecas@bshg.com",
@@ -208,9 +218,9 @@ function seed(){
     novoEquip({nome:"Forno 60 cm",categoria:"Cozinha",tipo:"Grande eletrodoméstico",compartimento:"Cozinha",utilidade:"Forno com vapor 100%",
       marca:"Siemens (iQ700)",modelo:"HS736G3B1/G7",referencia:"Type HT6BAFF0S · FD 0502 (fab. fev/2025) · Z-Nr 00181",numeroSerie:"385020390254001819",
       caracteristicas:"Forno integrável com vapor 100% · 60×60 cm · 71 L · TouchControl com visor TFT · softClose · Termóstato 30–300 °C · Grelhador, aquecimento sup./inf., função pizza · Limpeza hidrolítica (auto-limpeza) · Fabricante: BSH Hausgeräte GmbH, Made in Germany",
-      classeEnergetica:"A+",consumoCicloKwh:0.69,
+      classeEnergetica:"A+",consumoAnualKwh:55,consumoCicloKwh:0.69,
       ligacoes:"220–240 V~ · 50/60 Hz · 3,60 kW",
-      notas:"Consumo por ciclo: 0,69 kWh (ventilação forçada) / 0,87 kWh (convencional).",
+      notas:"Consumo por ciclo: 0,69 kWh (ventilação forçada) / 0,87 kWh (convencional). Anual ≈ 55 kWh (estimativa, ~1–2 utilizações/semana).",
       links:[{label:"Página do produto (Siemens PT)",url:"https://www.siemens-home.bsh-group.com/pt/pt/mkt-product/cozinha/fornos-a-vapor-e-vaporeiras/fornos-a-vapor/HS736G3B1"},{label:"Manuais e apoio (pesquisar E-Nr)",url:"https://www.siemens-home.bsh-group.com/pt/apoio-ao-consumidor/apoio"},{label:"Agendar reparação",url:"https://www.siemens-home.bsh-group.com/pt/apoio-ao-consumidor/reparacao/agendar-reparacao"}],
       contactoFabricante:"BSH/Siemens PT · Rua do Alto do Montijo 15, 2790-012 Carnaxide",
       contactoAssistencia:"214 250 720 · peças: bshp.pecas@bshg.com",
@@ -220,7 +230,7 @@ function seed(){
     novoEquip({nome:"Micro-ondas",categoria:"Cozinha",tipo:"Grande eletrodoméstico",compartimento:"Cozinha",utilidade:"Micro-ondas de encastre com grill",
       marca:"Siemens (iQ700)",modelo:"BE732R1B1/06",referencia:"Type SS-46W · FD 0503 (fab. mar/2025) · Z-Nr B27093 · dobradiça à direita",numeroSerie:"Z-Nr B27093 (nº série completo na fatura/DataMatrix)",
       caracteristicas:"Micro-ondas integrável com grill · 21 L · Micro 900 W (níveis 90/180/360/600/900 + Boost, tecnologia Inverter) · Grill 1330 W · Base cerâmica sem prato giratório · TouchControl com visor TFT · cookControl · Nicho 60×45 cm · Total 2050 W · 2460 MHz · Fabricante: BSH Hausgeräte GmbH, Made in UK",
-      ligacoes:"220–240 V~ · 50/60 Hz · 2050 W",
+      consumoAnualKwh:70,ligacoes:"220–240 V~ · 50/60 Hz · 2050 W",notas:"Consumo anual 70 kWh: estimativa (~15 min/dia) — micro-ondas não têm etiqueta energética UE.",
       links:[{label:"Página do produto (Siemens ES — modelo idêntico)",url:"https://www.siemens-home.bsh-group.com/es/es/product/cocina/hornos/compactos/BE732R1B1"},{label:"Manuais e apoio (pesquisar E-Nr)",url:"https://www.siemens-home.bsh-group.com/pt/apoio-ao-consumidor/apoio"},{label:"Agendar reparação",url:"https://www.siemens-home.bsh-group.com/pt/apoio-ao-consumidor/reparacao/agendar-reparacao"}],
       contactoFabricante:"BSH/Siemens PT · Rua do Alto do Montijo 15, 2790-012 Carnaxide",
       contactoAssistencia:"214 250 720 · peças: bshp.pecas@bshg.com",
@@ -230,7 +240,7 @@ function seed(){
     novoEquip({nome:"Placa de indução",categoria:"Cozinha",tipo:"Grande eletrodoméstico",compartimento:"Cozinha",utilidade:"Placa de indução com exaustor integrado",
       marca:"BORA",modelo:"X Pure PUXU2R (Rough)",referencia:"Type PURE · E-Nr 007016-10002 · FD 25DAXW09AF (fab. 2025)",numeroSerie:"FD 25DAXW09AF",
       caracteristicas:"Placa de indução vitrocerâmica com exaustor de placa integrado · 830×515×199 mm · 4 zonas de indução 230×230 mm (2100 W cada, com função ponte) · Níveis 1–9 + P (placa e exaustor) · Versão Rough (arestas em bruto, para encastre facetado/flush) · Fabricante: BORA Vertriebs GmbH, Innstraße 1, 6342 Niederndorf, Áustria · Made in Germany",
-      classeEnergetica:"",ligacoes:"380–415 V 3N~ (3×16 A) ou 2N~ (2×16 A), ou 220–240 V 1N~ (1×32 A) · 50–60 Hz · 7600 W máx.",
+      classeEnergetica:"",consumoAnualKwh:220,ligacoes:"380–415 V 3N~ (3×16 A) ou 2N~ (2×16 A), ou 220–240 V 1N~ (1×32 A) · 50–60 Hz · 7600 W máx.",notas:"Consumo anual 220 kWh: estimativa (~1 h/dia de cozinha em média) — placas não têm etiqueta energética UE.",
       comoFazer:"O filtro de gordura em inox pode ir à máquina de lavar loiça. Em modo recirculação, o filtro de carvão ativado substitui-se ~a cada 12 meses (a placa avisa).",
       links:[{label:"Página do produto (BORA)",url:"https://www.bora.com/en-int/cooktop-extractor-systems/puxu2r"},{label:"BORA X Pure (PT)",url:"https://www.bora.com/pt/pt/bora-sortimentdetailseite/show/bora-x-pure/puxu/"},{label:"Manuais BORA (downloads)",url:"https://www.bora.com/pt/pt/servico/downloads/"}],
       contactoFabricante:"BORA Vertriebs GmbH & Co KG · support@bora.com · www.bora.com",
@@ -264,8 +274,8 @@ function seed(){
     novoEquip({nome:"Box MEO (Android TV)",categoria:"Entretenimento",tipo:"Eletrónica",compartimento:"Sala",utilidade:"Box de TV do serviço MEO",
       marca:"Sagemcom (para MEO)",modelo:"DIW377 — STB4K Wi-Fi Android s/disco",referencia:"Código produto 1700269348 · ALT PT 253964766 · HW 02.00.00 · Fab. 03/2025",numeroSerie:"SGC 625131073845 · MAC 20354363CEB2",
       caracteristicas:"Set-top box 4K Android TV · Wi-Fi + Ethernet · Dolby Audio · Sem disco · Made in Tunisia · Fabricante: Sagemcom, CS 39000, 92271 Bois-Colombes, França",
-      ligacoes:"Alimentação própria · Ethernet + Wi-Fi · HDMI",
-      notas:"Equipamento do operador (comodato MEO) — em caso de avaria é a MEO que substitui; não tem garantia própria nem valor de substituição a segurar.",
+      consumoAnualKwh:60,standbyW:5,ligacoes:"Alimentação própria · Ethernet + Wi-Fi · HDMI",
+      notas:"Equipamento do operador (comodato MEO) — em caso de avaria é a MEO que substitui; não tem garantia própria nem valor de substituição a segurar. Consumo anual 60 kWh: estimativa (ligada 24h, ~7 W).",
       links:[{label:"Apoio MEO — equipamentos",url:"https://www.meo.pt/apoio-cliente"}],
       contactoFabricante:"Sagemcom · reclamations@sagemcom.com",
       contactoAssistencia:"MEO: 16200 · app MEO ou www.meo.pt/apoio-cliente",
@@ -274,8 +284,8 @@ function seed(){
     novoEquip({nome:"Bomba de calor total (AQS + piso radiante + AC)",categoria:"Climatização e águas",tipo:"Climatização/AQS",compartimento:"Casa técnica",utilidade:"Aquecimento, arrefecimento e águas quentes sanitárias",
       marca:"Daikin",modelo:"Altherma 3 R ECH₂O — interior EBSX16P50DF (bizone) + exterior ERLA16DAW17 (16 kW)",referencia:"Interior: MFG No. 2301939, fab. 2023.12, Made in Germany · Exterior: MFG No. 1503978, fab. 2025.01, Made in Belgium · Daikin Europe N.V., Oostende",numeroSerie:"2301939 (interior) · 1503978 (exterior)",
       caracteristicas:"Unidade interior com depósito térmico integrado de 477 L (classe 500) · AQS higiénica por serpentina de água fresca (36 L) · Bizone: 2 circuitos de aquecimento independentes (ex.: piso radiante + outro) · Tmax 85 °C · Perda estática 1,4 kWh/24h · 95 kg vazio / 572 kg cheio · Refrigerante R32 (p ≤ 4,2 MPa) · IPX4 · Preparada para resistência de apoio EKECBU e ligação solar térmica (estação solar Daikin drain-back instalada — ver foto) · Unidade exterior ERLA16DAW17: 16 kW, R32 3,8 kg (GWP 675 · 2,57 t CO₂eq), 101 kg, IPX4, PS 4,15/3,25 MPa, pressão de água máx. 4 bar, VSD integrado · Classe até A+++ em aquecimento",
-      ligacoes:"Interior: 230 V~ · 50 Hz · 6,3 A · Exterior ERLA16DAW17: 400 V 3N~ · 50 Hz · 14 A (máx. 16 A)",
-      notas:"Estação solar Daikin drain-back confirmada (módulo com visor e comandos junto ao depósito — modelo provável EKSRPS4; a etiqueta lateral pequena precisa de foto de perto para confirmar). Exterior fab. jan/2025 — garantia provavelmente ativa; confirmar data da fatura do instalador. Unidade exterior contém R32 (3,8 kg) — verificação de estanquidade periódica pode ser exigida; confirmar com o instalador. Limpar folhas/detritos do permutador exterior regularmente.",
+      consumoAnualKwh:4000,ligacoes:"Interior: 230 V~ · 50 Hz · 6,3 A · Exterior ERLA16DAW17: 400 V 3N~ · 50 Hz · 14 A (máx. 16 A)",
+      notas:"Estação solar Daikin drain-back confirmada (módulo com visor e comandos junto ao depósito — modelo provável EKSRPS4; a etiqueta lateral pequena precisa de foto de perto para confirmar). Exterior fab. jan/2025 — garantia provavelmente ativa; confirmar data da fatura do instalador. Unidade exterior contém R32 (3,8 kg) — verificação de estanquidade periódica pode ser exigida; confirmar com o instalador. Limpar folhas/detritos do permutador exterior regularmente. Consumo anual 4000 kWh: estimativa GROSSEIRA (aquecimento + AQS + arrefecimento) — varia muito com a utilização; o valor real está nos contadores do MMI/app Onecta.",
       comoFazer:"Controlador MMI no topo (ecrã preto): estado do sistema, pressão da água e caudal. Com placa WLAN opcional, controlo remoto pela app Daikin Onecta.",
       links:[{label:"Daikin Altherma 3 R ECH₂O (manuais ManualsLib)",url:"https://www.manualslib.com/manual/2523278/Daikin-Altherma-3-R-Ech2o.html"},{label:"Daikin PT — apoio e assistência",url:"https://www.daikin.pt/pt_pt/contactos.html"},{label:"App Onecta",url:"https://www.daikin.pt/pt_pt/residencial/onecta.html"}],
       contactoFabricante:"Daikin Europe N.V. · Daikin Portugal — www.daikin.pt",
@@ -283,21 +293,21 @@ function seed(){
       siteRegisto:"https://www.daikin.pt/pt_pt/contactos.html",
       rede:"Nenhuma",appFabricante:"Daikin Onecta (requer placa WLAN opcional)",apiDisponivel:"Sim — Onecta API (integração Home Assistant)",compatibilidades:"Home Assistant (via Onecta)",estadoIot:"Não ligado",
       manutencoes:[{tarefa:"Verificação técnica anual (obrigatória p/ garantia)",freqMeses:12,ultima:"",consumivel:""},{tarefa:"Verificar pressão do circuito e caudal no MMI",freqMeses:6,ultima:"",consumivel:""},{tarefa:"Limpar filtro magnético/malha do circuito",freqMeses:12,ultima:"",consumivel:""}]}),
-    mk("VMC — Ventilação mecânica central","Climatização e águas","Climatização/AQS","Casa técnica",[{tarefa:"Substituir/limpar filtros",freqMeses:6,ultima:"",consumivel:""}]),
+    novoEquip({nome:"VMC — Ventilação mecânica central",categoria:"Climatização e águas",tipo:"Climatização/AQS",compartimento:"Casa técnica",consumoAnualKwh:350,notas:"Consumo anual 350 kWh: estimativa (ventilação contínua ~40 W) — corrigir quando registarmos marca/modelo.",manutencoes:[{tarefa:"Substituir/limpar filtros",freqMeses:6,ultima:"",consumivel:""}]}),
     novoEquip({nome:"Bomba de calor da piscina",categoria:"Exterior",tipo:"Exterior/Jardim",compartimento:"Piscina",utilidade:"Aquecimento (e arrefecimento) da água da piscina",
       marca:"AquaX",modelo:"TurboSilence Inverter TSC40T",referencia:"Etiqueta 6020 · TÜV Rheinland ID 1111253628",numeroSerie:"828103781240343022",
       caracteristicas:"Bomba de calor inverter para piscina · Aquecimento 40 kW (Turbo) / 35 kW (Smart) a ar 26 °C/água 26 °C · 28/24 kW a ar 15 °C · Arrefecimento 16 kW · COP 15,8–6,4 (11,1 a 50% de capacidade — classe A) · Pressão sonora 42,5–51,7 dB(A) a 1 m (43,8 a 50%) · Caudal de água aconselhado 12–18 m³/h · Refrigerante R32 3200 g (GWP 675 · 2,16 t CO₂eq — contém gases fluorados) · IPX4 · 126 kg",
-      ligacoes:"400 V 3~ · 50 Hz · Potência absorvida 0,60–5,94 kW · Corrente máx. 12,5 A · Disjuntor nº 26 (Bomba calor) no quadro",
+      consumoAnualKwh:2000,ligacoes:"400 V 3~ · 50 Hz · Potência absorvida 0,60–5,94 kW · Corrente nominal 0,87–8,57 A (máx. 12,5 A) · Disjuntor nº 26 (Bomba calor) no quadro",
       comoFazer:"Ao ligar, faz um auto-teste de ~3 min. Códigos no visor que NÃO são avaria: E3 sem fluxo de água · Ed lembrete anti-congelação · Eb fora da gama de funcionamento · E6 fluxo insuficiente/bomba bloqueada · E5 alimentação anormal. Com ar < 2 °C, garantir sempre circulação de água para não congelar o permutador.",
       links:[{label:"Manuais TurboSilence/AquaX (QR da etiqueta)",url:"https://www.aquax-pool.com"}],
       contactoAssistencia:"Instalador da piscina (preencher)",
       rede:"Nenhuma",appFabricante:"",apiDisponivel:"Não",compatibilidades:"",estadoIot:"Não ligado",
-      notas:"Confirmar fornecedor/instalador e data de instalação para a garantia. Contém gases fluorados (R32, 3,2 kg) — verificação de estanquidade pode ser exigida legalmente; confirmar com o instalador.",
+      notas:"Confirmar fornecedor/instalador e data de instalação para a garantia. Contém gases fluorados (R32, 3,2 kg) — verificação de estanquidade pode ser exigida legalmente; confirmar com o instalador. Consumo anual 2000 kWh: estimativa (época de banhos; varia muito com meses de uso, temperatura-alvo e cobertura). Confirmar também se o disjuntor nº 26 é o desta bomba ou o da bomba de calor da casa.",
       manutencoes:[{tarefa:"Limpeza do evaporador e verificação",freqMeses:12,ultima:"",consumivel:""},{tarefa:"Inverno: garantir anti-congelação (fluxo de água ou drenagem)",freqMeses:12,ultima:"",consumivel:""}]}),
     novoEquip({nome:"Controlador de rega",categoria:"Exterior",tipo:"Exterior/Jardim",compartimento:"Exterior/Jardim",utilidade:"Controlador Wi-Fi da rega automática (Hydrawise)",
-      marca:"Hunter",modelo:"PRO-HC Wi-Fi (PHC-2401-E, 24 zonas)",referencia:"PHC 24 Zone Controller · Etiqueta 215513 · FCC ID 2ADHKRTWINC1500",numeroSerie:"02E79636E4",
+      marca:"Hunter",modelo:"PRO-HC Wi-Fi (PHC-2401-E, 24 zonas)",referencia:"PHC 24 Zone Controller · Etiqueta 215513 · FCC ID 2ADHKATWINC1500 · IC ID 20266-WINC1500PB",numeroSerie:"02E79636E4",
       caracteristicas:"Controlador de rega Wi-Fi para exterior · 24 estações + saída master valve · Ecrã tátil a cores · Plataforma Hydrawise (rega inteligente com previsão meteorológica) · Caixa com fechadura e chave · Fabricante: Hunter Industries, 1940 Diamond Street, San Marcos, CA, EUA",
-      ligacoes:"Entrada 220–240 V~ · 50/60 Hz · 0,18 A · Saída 24 V~ · 0,56 A por estação (máx. total < 1,0 A)",
+      consumoAnualKwh:26,ligacoes:"Entrada 220–240 V~ · 50/60 Hz · 0,18 A · Saída 24 V~ · 0,56 A por estação (máx. total < 1,0 A)",
       comoFazer:"Gestão e programação pela app/portal Hydrawise (hydrawise.com). No ecrã do controlador: Zones, Settings e Status. A chave da porta está no próprio equipamento.",
       links:[{label:"Página do produto (Hunter PRO-HC)",url:"https://www.hunterirrigation.com/pt/rega/controladores/pro-hc"},{label:"Portal/app Hydrawise",url:"https://app.hydrawise.com"},{label:"Suporte e manuais Hydrawise",url:"https://support.hydrawise.com"}],
       contactoFabricante:"Hunter Industries · www.hunterirrigation.com",
@@ -307,7 +317,7 @@ function seed(){
     novoEquip({nome:"Switch de rede (PoE)",categoria:"Informática e mobilidade",tipo:"Rede/Informática",compartimento:"Casa técnica",utilidade:"Switch central da rede cablada, alimenta os APs por PoE",
       marca:"Ubiquiti (UniFi)",modelo:"USW-Lite-8-PoE — Switch Lite 8 PoE",referencia:"Date code 2451V · MAC 0C:EA:14:C8:4C:84",numeroSerie:"0CEA14C84C84",
       caracteristicas:"Switch gigabit de 8 portas, 4 com PoE+ 802.3at (orçamento 52 W) · Gestão UniFi Network · Instalado na caixa ATI (disjuntor nº 27 A.T.I.)",
-      ligacoes:"Alimentador próprio · 8× RJ45 Gigabit (4× PoE+)",
+      consumoAnualKwh:70,ligacoes:"Alimentador próprio · 8× RJ45 Gigabit (4× PoE+)",notas:"Consumo anual 70 kWh: estimativa (~8 W próprios, 24h/dia). A energia dos APs alimentados por PoE conta nas fichas deles.",
       links:[{label:"Página do produto (Ubiquiti)",url:"https://ui.com/eu/en/switching/standard/usw-lite-8-poe"},{label:"Portal UniFi",url:"https://unifi.ui.com"}],
       contactoFabricante:"Ubiquiti Inc. · 685 Third Avenue, New York, NY 10017 USA · ui.com",
       rede:"Ethernet",appFabricante:"UniFi Network",apiDisponivel:"Sim — UniFi Network API (integração Home Assistant)",compatibilidades:"Home Assistant",estadoIot:"Ligado, sem controlo na app",
@@ -315,7 +325,7 @@ function seed(){
     novoEquip({nome:"Access point Wi-Fi exterior",categoria:"Informática e mobilidade",tipo:"Rede/Informática",compartimento:"Exterior/Jardim",utilidade:"Cobertura Wi-Fi no exterior/jardim",
       marca:"Ubiquiti (UniFi)",modelo:"UAP-AC-M — UniFi AC Mesh (exterior)",referencia:"Date code 2506V · MAC 1C:6A:1B:70:07:B4 · IPX4",numeroSerie:"1C6A1B7007B4-JcW7Je",
       caracteristicas:"AP Wi-Fi 5 (AC1200) para exterior, IPX4 · 2 antenas destacáveis omni · Alimentação PoE 24V/48V 0,5 A · Gestão UniFi Network",
-      ligacoes:"PoE 24/48 V · 0,5 A · 1× RJ45",
+      consumoAnualKwh:44,ligacoes:"PoE 24/48 V · 0,5 A · 1× RJ45",notas:"Consumo anual 44 kWh: estimativa (~5 W típicos, máx. 8,5 W, 24h/dia).",
       links:[{label:"Página do produto (Ubiquiti)",url:"https://ui.com/eu/en/wifi/outdoor/uap-ac-m"},{label:"Portal UniFi",url:"https://unifi.ui.com"}],
       contactoFabricante:"Ubiquiti Inc. · 685 Third Avenue, New York, NY 10017 USA · ui.com",
       rede:"Ethernet",appFabricante:"UniFi Network",apiDisponivel:"Sim — UniFi Network API (integração Home Assistant)",compatibilidades:"Home Assistant",estadoIot:"Ligado, sem controlo na app",
@@ -323,7 +333,7 @@ function seed(){
     novoEquip({nome:"Access point Wi-Fi interior (teto)",categoria:"Informática e mobilidade",tipo:"Rede/Informática",compartimento:"",utilidade:"Cobertura Wi-Fi interior — AP redondo de teto com anel LED azul",
       marca:"Ubiquiti (UniFi)",modelo:"U7 Pro — UniFi Wi-Fi 7 Pro (teto)",referencia:"Date code 2513V · MAC 84:78:48:E2:44:F4 · QR jdg-lu8-4rt · Made in Vietnam",numeroSerie:"847848E244F4",
       caracteristicas:"AP Wi-Fi 7 tri-band (2.4/5/6 GHz, BE9300) · 6 streams espaciais · Montagem em teto, anel LED · Alimentação PoE+ · Uplink 2.5 GbE · Gestão UniFi Network · Verificar se há mais do que uma unidade na casa (fotos mostram AP em duas divisões)",
-      ligacoes:"PoE+ · 1× RJ45 2.5 GbE",
+      consumoAnualKwh:80,ligacoes:"PoE+ · 1× RJ45 2.5 GbE",notas:"Consumo anual 80 kWh: estimativa (~9 W típicos, máx. 21 W, 24h/dia).",
       links:[{label:"Página do produto (Ubiquiti U7 Pro)",url:"https://ui.com/eu/en/wifi/flagship/u7-pro"},{label:"Portal UniFi",url:"https://unifi.ui.com"}],
       contactoFabricante:"Ubiquiti Inc. · 685 Third Avenue, New York, NY 10017 USA · ui.com",
       rede:"Ethernet",appFabricante:"UniFi Network",apiDisponivel:"Sim — UniFi Network API (integração Home Assistant)",compatibilidades:"Home Assistant",estadoIot:"Ligado, sem controlo na app",
@@ -332,11 +342,11 @@ function seed(){
       caracteristicas:"1 Corte geral · 2 Quadro parcial Piso 1 · 3 Quadro parcial Garagem · 4 Quadro parcial Anexo · 5 Geral exterior · 6 Iluminação exterior · 7 Tomada cozinha/churrasqueira · 8 Vídeo porteiro · 9 Geral · 10 Painel solar (resistência) · 11 Painel solar (+ depósito) · 12 Máq. lavar roupa · 13 Painel solar (bomba circuladora/recirculação) · 14 Tomadas lavandaria · 15 Máq. secar roupa · 16 Tomadas sala estar · 17 Tomadas hall entrada/WC/corredor · 18 Tomadas sala jantar · 19 Elevador · 20 Iluminação roupeiro · 21 Piso radiante lavandaria · 22 Micro-ondas · 23 Forno · 24 Piso radiante corredor · 25 Frigorífico/arca vertical · 26 Bomba de calor · 27 A.T.I. · 28 Intrusão · 29 V.C. sala estar · 30 V.C. hall entrada · 31 V.C. sala jantar · 32 Vinoteca · 33 Máq. lavar loiça · 34 Placa · 35 V.C. cozinha · 36 Forno-copa · 37 Máq. secar roupa · 38 CCTV · 39 Iluminação · 40 Estores · 41 Domótica · 42 Iluminação · 43 Reserva",
       notas:"Transcrito da lista manuscrita afixada no quadro (fotos 08/2026). V.C. = ventiloconvector (a confirmar). Nº 37 'Máq. secar roupa' repete o nº 15 — confirmar qual é o efetivo.",
       manutencoes:[{tarefa:"Testar botão de teste dos diferenciais",freqMeses:6,ultima:"",consumivel:""}]}),
-    mk("Aspirador","Pequenos eletrodomésticos","Pequeno eletrodoméstico","Portátil/Vários",[{tarefa:"Limpar/substituir filtros",freqMeses:6,ultima:"",consumivel:""}]),
+    novoEquip({nome:"Aspirador",categoria:"Pequenos eletrodomésticos",tipo:"Pequeno eletrodoméstico",compartimento:"Portátil/Vários",consumoAnualKwh:25,notas:"Consumo anual 25 kWh: estimativa (~1 h/semana, ~500 W) — corrigir quando registarmos marca/modelo.",manutencoes:[{tarefa:"Limpar/substituir filtros",freqMeses:6,ultima:"",consumivel:""}]}),
     novoEquip({nome:"Aspirador portátil",categoria:"Pequenos eletrodomésticos",tipo:"Pequeno eletrodoméstico",compartimento:"Portátil/Vários",utilidade:"Aspirador de mão sem fios",
       marca:"Bosch",modelo:"Move 14.4V (BHN14N/04)",referencia:"Type VXAS021V14 · FD 0201 (fab. jan/2022) · Z-Nr 008847 · Made in China",numeroSerie:"Z-Nr 008847",
       caracteristicas:"Aspirador de mão sem fios · Bateria 14,4 V · 125 W · Depósito sem saco, filtro lavável · Carregador 22 V / 200 mA · Fabricante: BSH Hausgeräte GmbH (A Bosch Company)",
-      ligacoes:"Carregador 22 V ⎓ 200 mA",
+      consumoAnualKwh:5,ligacoes:"Carregador 22 V ⎓ 200 mA",notas:"Consumo anual 5 kWh: estimativa (carregamentos).",
       comoFazer:"Filtro e depósito laváveis em água — deixar secar bem antes de recolocar.",
       links:[{label:"Manuais e peças (Bosch — pesquisar BHN14N)",url:"https://www.bosch-home.pt/apoio-ao-consumidor"},{label:"Peças e acessórios BSH",url:"https://www.bosch-home.pt/loja-de-pecas-e-acessorios"}],
       contactoFabricante:"BSH Hausgeräte GmbH · Carl-Wery-Straße 34, 81739 München · bosch-home.com",
@@ -346,19 +356,19 @@ function seed(){
     novoEquip({nome:"Computador portátil",categoria:"Informática e mobilidade",tipo:"Rede/Informática",compartimento:"Escritório",utilidade:"Portátil principal",
       marca:"Apple",modelo:"MacBook Pro 16'' (2019)",referencia:"Intel Core i9 2,3 GHz 8 núcleos · AMD Radeon Pro 5500M 8 GB + Intel UHD 630 · 32 GB DDR4 2667 MHz",numeroSerie:"C02CP08NMD6T",
       caracteristicas:"MacBook Pro 16'' (2019) · Intel Core i9 8 núcleos 2,3 GHz · Radeon Pro 5500M 8 GB · 32 GB RAM · macOS Tahoe 26.6 · Cinzento sideral",
-      ligacoes:"USB-C/Thunderbolt 3 · Wi-Fi · Bluetooth",
+      consumoAnualKwh:50,ligacoes:"USB-C/Thunderbolt 3 · Wi-Fi · Bluetooth",
       comoFazer:"Verificar cobertura/garantia: checkcoverage.apple.com com o nº de série C02CP08NMD6T.",
       links:[{label:"Suporte Apple",url:"https://support.apple.com/pt-pt"},{label:"Verificar cobertura",url:"https://checkcoverage.apple.com"}],
       contactoFabricante:"Apple · apple.com/pt",
       contactoAssistencia:"Suporte Apple · support.apple.com/pt-pt · Apple Store/centros autorizados",
       siteRegisto:"https://checkcoverage.apple.com",
-      notas:"Modelo de 2019 (Intel) — fora de garantia; Apple classifica como 'vintage' a partir de ~2026: reparações sujeitas a disponibilidade de peças.",
+      notas:"Modelo de 2019 (Intel) — fora de garantia; Apple classifica como 'vintage' a partir de ~2026: reparações sujeitas a disponibilidade de peças. Consumo anual 50 kWh: estimativa (utilização mista).",
       rede:"Wi-Fi",appFabricante:"—",apiDisponivel:"—",compatibilidades:"Ecossistema Apple (iCloud…)",estadoIot:"Ligado, sem controlo na app",
       manutencoes:[]}),
     novoEquip({nome:"iPad",categoria:"Informática e mobilidade",tipo:"Rede/Informática",compartimento:"Portátil/Vários",utilidade:"Tablet",
       marca:"Apple",modelo:"iPad Pro 13'' (M5)",referencia:"MDYJ4TY/A",numeroSerie:"K90DVJG9TJ",
       caracteristicas:"iPad Pro 13'' com chip M5 · iPadOS 27 · Lançado out/2025",
-      ligacoes:"USB-C/Thunderbolt · Wi-Fi · Bluetooth",
+      consumoAnualKwh:12,ligacoes:"USB-C/Thunderbolt · Wi-Fi · Bluetooth",notas:"Consumo anual 12 kWh: estimativa (carregamento diário).",
       dataCompra:"2025-10-30",garantiaMeses:12,garantiaNotas:"Garantia limitada Apple expira a 30/10/2026 (confirmado em Definições). Data de compra estimada a partir da garantia — corrigir com a fatura.",
       comoFazer:"Verificar cobertura/AppleCare: checkcoverage.apple.com com o nº de série K90DVJG9TJ.",
       links:[{label:"Suporte Apple",url:"https://support.apple.com/pt-pt"},{label:"Verificar cobertura",url:"https://checkcoverage.apple.com"}],
@@ -370,7 +380,7 @@ function seed(){
     novoEquip({nome:"iPhone",categoria:"Informática e mobilidade",tipo:"Rede/Informática",compartimento:"Portátil/Vários",
       marca:"Apple",modelo:"iPhone 16 Pro Max",referencia:"MYWY#QL/A (QL/A = mercado PT)",numeroSerie:"G4K9GN4RLK",
       caracteristicas:"Ecrã Super Retina XDR 6,9'' ProMotion · Chip A18 Pro · Câmaras Pro 48 MP · USB-C · Face ID · Lançado set/2024",
-      ligacoes:"USB-C · Wi-Fi · 5G · Bluetooth",
+      consumoAnualKwh:7,ligacoes:"USB-C · Wi-Fi · 5G · Bluetooth",notas:"Consumo anual 7 kWh: estimativa (carregamento diário).",
       comoFazer:"Verificar estado da garantia/AppleCare: checkcoverage.apple.com com o nº de série G4K9GN4RLK.",
       links:[{label:"Suporte Apple (PT)",url:"https://support.apple.com/pt-pt"},{label:"Verificar cobertura/garantia",url:"https://checkcoverage.apple.com"},{label:"Manual do utilizador iPhone",url:"https://support.apple.com/pt-pt/guide/iphone/welcome/ios"}],
       contactoFabricante:"Apple Distribution International · www.apple.com/pt",
@@ -381,7 +391,7 @@ function seed(){
     novoEquip({nome:"Coluna de som portátil",categoria:"Entretenimento",tipo:"Eletrónica",compartimento:"Portátil/Vários",utilidade:"Coluna Bluetooth portátil",
       marca:"JBL",modelo:"Charge 5",referencia:"Preta · Nº de série na base da coluna (confirmar)",numeroSerie:"",
       caracteristicas:"Coluna Bluetooth portátil · 40 W RMS (30 W woofer + 10 W tweeter) · IP67 (água e pó) · Bateria 7500 mAh, ~20 h de autonomia · Powerbank integrado (carrega outros dispositivos por USB) · PartyBoost para emparelhar várias colunas JBL",
-      ligacoes:"USB-C (carregamento) · Bluetooth 5.1",
+      consumoAnualKwh:5,ligacoes:"USB-C (carregamento) · Bluetooth 5.1",notas:"Consumo anual 5 kWh: estimativa (carregamentos).",
       links:[{label:"Página do produto (JBL)",url:"https://pt.jbl.com/CHARGE5.html"},{label:"Suporte e manuais JBL",url:"https://support.jbl.com"}],
       contactoFabricante:"Harman International (JBL) · pt.jbl.com",
       rede:"Bluetooth",appFabricante:"JBL Portable",apiDisponivel:"Não",compatibilidades:"",estadoIot:"Não ligado",
@@ -395,6 +405,7 @@ function migrar(novo,antigo){
   novo.equipamentos.forEach(e=>{
     const o=porNome[e.nome];if(o)delete porNome[e.nome];if(!o)return;
     ["dataCompra","loja","preco","garantiaNotas","valorSubstituicao","fotoEquip","fotoEtiqueta","notas","comoFazer","utilidade","compartimento"].forEach(k=>{if((e[k]===""||e[k]==null)&&o[k])e[k]=o[k];});
+    if(o.atualizadoTs)e.atualizadoTs=o.atualizadoTs;
     if(o.garantiaMeses&&o.garantiaMeses!==24&&e.garantiaMeses===24)e.garantiaMeses=o.garantiaMeses;
     if(o.avarias&&o.avarias.length&&!e.avarias.length)e.avarias=o.avarias;
     e.manutencoes.forEach(m=>{const om=(o.manutencoes||[]).find(x=>x.tarefa===m.tarefa);if(om&&om.ultima&&!m.ultima)m.ultima=om.ultima;});
@@ -647,7 +658,7 @@ function fichaTab(e,tab){
   ])+`<p class="muted mt">Preparação para a Fase 4 — quando avançarmos para controlo IoT, os equipamentos "controláveis" ganham comandos aqui.</p>`;
   return "";
 }
-function marcarFeita(id,i){const e=getEq(id);e.manutencoes[i].ultima=new Date().toISOString().slice(0,10);e.atualizadoEm=e.manutencoes[i].ultima;save();render();}
+function marcarFeita(id,i){const e=getEq(id);e.manutencoes[i].ultima=new Date().toISOString().slice(0,10);e.atualizadoEm=e.manutencoes[i].ultima;e.atualizadoTs=new Date().toISOString();save();render();}
 function duplicarEq(id){const e=getEq(id);const c=JSON.parse(JSON.stringify(e));c.id="e"+Date.now()+Math.random().toString(36).slice(2,6);c.nome=e.nome+" (cópia)";c.numeroSerie="";DB.equipamentos.push(c);save();go({name:"ficha",id:c.id});}
 function arquivarEq(id){const e=getEq(id);e.arquivado=!e.arquivado;save();go({name:"lista"});}
 function apagarEq(id){const e=getEq(id);if(confirm(`Apagar definitivamente "${e.nome}"? Esta ação não pode ser anulada.`)){DB.equipamentos=DB.equipamentos.filter(x=>x.id!==id);save();go({name:"lista"});}}
@@ -723,6 +734,7 @@ function gravarForm(){
   DRAFT.avarias=DRAFT.avarias.filter(a=>a.descricao||a.data);
   DRAFT.manutencoes=DRAFT.manutencoes.filter(m=>m.tarefa);
   DRAFT.atualizadoEm=new Date().toISOString().slice(0,10);
+  DRAFT.atualizadoTs=new Date().toISOString();
   const i=DB.equipamentos.findIndex(e=>e.id===DRAFT.id);
   if(i>=0)DB.equipamentos[i]=DRAFT;else{DRAFT.criadoManual=true;DB.equipamentos.push(DRAFT);}
   save();go({name:"ficha",id:DRAFT.id});
@@ -781,6 +793,7 @@ function vDefs(){
       ?`<p>Ligado a <b>${esc(NUVEM.user)}/${esc(NUVEM.repo)}</b> · ${esc(NUVEM_ESTADO.txt||"ainda sem sincronização nesta sessão")}</p>
         <p class="muted">Os dados são encriptados neste aparelho antes de serem enviados — só quem tem a palavra-passe da casa os consegue ler.</p>
         <button class="btn primary" onclick="nuvemPull(true)">Sincronizar agora</button>
+        <button class="btn" onclick="nuvemForcar()">Forçar envio deste aparelho</button>
         <button class="btn" onclick="nuvemConfigurar()">Alterar configuração</button>
         <button class="btn danger" onclick="nuvemDesligar()">Desligar</button>`
       :`<p class="muted">Sincroniza os dados entre Mac, iPhone e iPad através de um repositório privado no GitHub, com encriptação ponta-a-ponta. Precisas dos 4 dados indicados no guia de publicação.</p>
@@ -788,7 +801,7 @@ function vDefs(){
   </div>`;
   return nuvemCard+syncCard+`
   <div class="card"><h2>💾 Backup e dados</h2>
-    <p class="muted">Os dados vivem apenas neste browser. Exporta regularmente e guarda o ficheiro em local seguro. Para usar noutro dispositivo, exporta aqui e importa lá. No Chrome/Edge, o Exportar deixa-te escolher a pasta de destino.</p>
+    <p class="muted">A sincronização na nuvem trata do dia a dia entre aparelhos. Este cartão é a rede de segurança: exporta de vez em quando um backup JSON para local seguro — protege contra apagões acidentais (que a sincronização replicaria) e contra a perda da palavra-passe de encriptação.</p>
     <button class="btn primary" onclick="exportarJSON()">⬇ Exportar dados (JSON)</button>
     <button class="btn" onclick="$('#importFile').click()">⬆ Importar dados</button>
     <button class="btn" onclick="window.print()">🖨 Imprimir inventário</button>
@@ -920,12 +933,16 @@ async function nuvemPull(interativo){
       try{d=JSON.parse(await nuvemDecifrar(p,NUVEM.pass));}
       catch(e){throw new Error("palavra-passe de encriptação errada?");}
       if(d.equipamentos&&d.settings){
+        if(d.seedV!==SEED_V)d=migrar({seedV:SEED_V,settings:JSON.parse(JSON.stringify(DEFAULTS)),equipamentos:seed()},d);
         const remTs=d.syncTs||"",locTs=DB.syncTs||"";
-        if(remTs>locTs){
-          if(d.seedV!==SEED_V){DB=migrar({seedV:SEED_V,settings:JSON.parse(JSON.stringify(DEFAULTS)),equipamentos:seed()},d);DB.syncTs=new Date().toISOString();}
-          else DB=d;
-          localStorage.setItem(LS_KEY,JSON.stringify(DB));render();
-        }else if(locTs>remTs){await nuvemPush();return;}
+        const remNovo=remTs>locTs;
+        const antes=JSON.stringify(DB.equipamentos)+JSON.stringify(DB.settings);
+        DB={seedV:SEED_V,settings:remNovo?d.settings:DB.settings,
+            equipamentos:fundirEquipamentos(DB.equipamentos,d.equipamentos,remNovo),
+            syncTs:remNovo?remTs:locTs};
+        localStorage.setItem(LS_KEY,JSON.stringify(DB));
+        if(JSON.stringify(DB.equipamentos)+JSON.stringify(DB.settings)!==antes)render();
+        if(JSON.stringify(DB.equipamentos)!==JSON.stringify(d.equipamentos)||JSON.stringify(DB.settings)!==JSON.stringify(d.settings)){await nuvemPush();return;}
       }
     }else{await nuvemPush();return;}
     NUVEM_ESTADO={txt:"Sincronizado às "+new Date().toLocaleTimeString("pt-PT",{hour:"2-digit",minute:"2-digit"}),ok:true};syncDot();
@@ -956,6 +973,27 @@ async function nuvemPush(){
   finally{NUVEM_BUSY=false;}
 }
 function nuvemPushDeb(){if(typeof NUVEM==="undefined"||!nuvemCfgOk())return;clearTimeout(NUVEM_TIMER);NUVEM_TIMER=setTimeout(nuvemPush,2500);}
+/* Fusão ficha a ficha: para cada equipamento vence a versão editada mais recentemente.
+   Em empate (sem carimbo), vence o lado cuja base de dados é globalmente mais recente. */
+function fundirEquipamentos(locEqs,remEqs,remNovo){
+  const ts=e=>e.atualizadoTs||"";
+  const out=locEqs.slice();
+  remEqs.forEach(r=>{
+    let i=out.findIndex(e=>e.id===r.id);
+    if(i<0)i=out.findIndex(e=>e.nome===r.nome);
+    if(i<0){out.push(r);return;}
+    const a=ts(out[i]),b=ts(r);
+    if(b>a||(b===a&&remNovo))out[i]=r;
+  });
+  return out;
+}
+function nuvemForcar(){
+  if(!confirm("Enviar os dados DESTE aparelho para a nuvem, sobrepondo-os aos que lá estão? Usa isto no aparelho que tem a informação completa."))return;
+  DB.syncTs=new Date().toISOString();
+  DB.equipamentos.forEach(e=>{e.atualizadoTs=DB.syncTs;});
+  localStorage.setItem(LS_KEY,JSON.stringify(DB));
+  nuvemPush();
+}
 async function nuvemConfigurar(){
   alert("Vais precisar de 4 dados (ver guia): utilizador GitHub, nome do repositório privado de dados, token de acesso e a palavra-passe de encriptação da casa.");
   const u=prompt("1/4 · Utilizador GitHub:",NUVEM.user||"");if(u==null)return;
@@ -974,6 +1012,7 @@ window.addEventListener("online",()=>{if(nuvemCfgOk())nuvemPull();});
 if("serviceWorker" in navigator&&location.protocol==="https:")navigator.serviceWorker.register("sw.js").catch(()=>{});
 /* ================= ARRANQUE ================= */
 load();render();arranqueFicheiro();syncDot();if(nuvemCfgOk())nuvemPull();
+(function(){const v=document.getElementById("appv");if(v)v.textContent="Versão "+SEED_V;})();
 </script>
 </body>
 </html>
