@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Casa · Equipamentos</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#2563eb">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Casa">
+<style>
+:root{
+  --bg:#f4f5f7; --card:#ffffff; --ink:#1c2430; --muted:#6b7686; --line:#e3e7ed;
+  --accent:#2563eb; --accent-soft:#eaf1fe; --ok:#16a34a; --warn:#d97706; --bad:#dc2626;
+  --radius:12px; --shadow:0 1px 3px rgba(16,24,40,.08);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);font-size:15px}
+header{background:var(--card);border-bottom:1px solid var(--line);padding:10px 16px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:20;flex-wrap:wrap}
+header h1{font-size:17px;margin:0;flex:1;white-space:nowrap}
+nav{display:flex;gap:4px;flex-wrap:wrap}
+nav button{background:none;border:none;padding:7px 12px;border-radius:8px;cursor:pointer;font-size:14px;color:var(--muted);font-weight:500}
+nav button.active{background:var(--accent-soft);color:var(--accent)}
+main{max-width:1080px;margin:0 auto;padding:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;margin-bottom:14px}
+h2{font-size:16px;margin:0 0 12px}
+h3{font-size:14px;margin:16px 0 8px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+.grid{display:grid;gap:12px}
+.grid.cols3{grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
+.grid.cols4{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
+.stat{padding:14px;border:1px solid var(--line);border-radius:var(--radius);background:var(--card);cursor:pointer}
+.stat b{font-size:22px;display:block}
+.stat span{color:var(--muted);font-size:13px}
+.badge{display:inline-block;padding:2px 9px;border-radius:99px;font-size:12px;font-weight:600}
+.badge.ok{background:#e7f6ec;color:var(--ok)} .badge.warn{background:#fdf0e0;color:var(--warn)} .badge.bad{background:#fdeaea;color:var(--bad)} .badge.grey{background:#eef0f3;color:var(--muted)} .badge.blue{background:var(--accent-soft);color:var(--accent)}
+.equip-card{display:flex;gap:12px;align-items:center;padding:12px;border:1px solid var(--line);border-radius:var(--radius);background:var(--card);cursor:pointer;transition:border-color .15s}
+.equip-card:hover{border-color:var(--accent)}
+.thumb{width:52px;height:52px;border-radius:10px;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;overflow:hidden}
+.thumb img{width:100%;height:100%;object-fit:cover}
+.equip-card .info{flex:1;min-width:0}
+.equip-card .info b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.equip-card .info small{color:var(--muted)}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.chip{padding:5px 12px;border-radius:99px;border:1px solid var(--line);background:var(--card);cursor:pointer;font-size:13px;color:var(--muted)}
+.chip.on{background:var(--accent);border-color:var(--accent);color:#fff}
+input,select,textarea{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-size:14px;font-family:inherit;background:#fff;color:var(--ink)}
+textarea{min-height:70px;resize:vertical}
+label{display:block;font-size:12.5px;font-weight:600;color:var(--muted);margin:10px 0 4px}
+.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:0 14px}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;border:1px solid var(--line);background:var(--card);cursor:pointer;font-size:14px;font-weight:600;color:var(--ink)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.danger{color:var(--bad);border-color:#f3c6c6}
+.btn.small{padding:5px 10px;font-size:13px}
+.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.toolbar input[type=search]{flex:1;min-width:180px}
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--line);margin-bottom:14px;overflow-x:auto}
+.tabs button{background:none;border:none;padding:9px 14px;cursor:pointer;font-size:14px;color:var(--muted);border-bottom:2px solid transparent;white-space:nowrap}
+.tabs button.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
+th{color:var(--muted);font-size:12.5px;text-transform:uppercase;letter-spacing:.3px}
+.kv{display:grid;grid-template-columns:180px 1fr;gap:6px 14px;font-size:14px}
+.kv dt{color:var(--muted)} .kv dd{margin:0;white-space:pre-wrap}
+.alert-item{display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:10px;margin-bottom:6px;cursor:pointer}
+.alert-item.warn{background:#fdf6ec} .alert-item.bad{background:#fdf0f0}
+details{border:1px solid var(--line);border-radius:var(--radius);padding:0 14px;margin-bottom:10px;background:var(--card)}
+details summary{padding:12px 0;font-weight:600;cursor:pointer;font-size:14px}
+details[open]{padding-bottom:14px}
+.muted{color:var(--muted)} .right{text-align:right} .mt{margin-top:12px}
+.empty{text-align:center;padding:40px;color:var(--muted)}
+.item-row{display:flex;gap:8px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--line)}
+.item-row:last-child{border-bottom:none}
+.photo-preview{max-width:140px;max-height:140px;border-radius:10px;border:1px solid var(--line);display:block;margin-top:6px}
+footer{text-align:center;color:var(--muted);font-size:12.5px;padding:20px}
+/* ===== Acessibilidade ===== */
+body.fs1{zoom:1.15} body.fs2{zoom:1.3}
+body.contraste{--bg:#fff;--card:#fff;--ink:#000;--muted:#2f3a48;--line:#8b95a5;--shadow:none}
+body.escuro{--bg:#11161d;--card:#1a212b;--ink:#e8edf4;--muted:#9aa7b8;--line:#2c3543;--accent-soft:#20304d;--shadow:0 1px 3px rgba(0,0,0,.5)}
+body.escuro input,body.escuro select,body.escuro textarea{background:#11161d;color:var(--ink)}
+body.escuro .badge.ok{background:#173427} body.escuro .badge.warn{background:#3a2a12} body.escuro .badge.bad{background:#3a1717} body.escuro .badge.grey{background:#242c37}
+body.escuro .alert-item.warn{background:#2a2314} body.escuro .alert-item.bad{background:#2f1a1a}
+.a11y{display:flex;gap:4px;align-items:center}
+.a11y button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;padding:4px 9px;cursor:pointer;font-size:13px;font-weight:600}
+.a11y button.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.idx{display:flex;gap:2px;flex-wrap:wrap;margin:0 0 10px}
+.idx button{border:1px solid var(--line);background:var(--card);color:var(--accent);min-width:26px;padding:3px 0;border-radius:6px;cursor:pointer;font-size:12.5px;font-weight:600}
+.idx button:disabled{color:var(--line);cursor:default}
+.grp-h{grid-column:1/-1;margin:6px 0 -4px;font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+@media(max-width:640px){.kv{grid-template-columns:1fr}.kv dt{margin-top:8px;font-size:12px}}
+@media print{header,nav,.toolbar,.btn,footer{display:none!important}body{background:#fff}.card{box-shadow:none;border:none}}
+</style>
+</head>
+<body>
+<header>
+  <h1>🏠 Casa · Equipamentos <span id="syncdot" style="font-size:13px"></span></h1>
+  <nav id="nav"></nav>
+  <div class="a11y" id="a11y"></div>
+</header>
+<main id="main"></main>
+<footer>Dados guardados localmente neste browser · Faz backups regulares (Definições → Exportar)</footer>
+<input type="file" id="importFile" accept=".json" style="display:none">
+<script>
+"use strict";
+/* ================= ESTADO E PERSISTÊNCIA ================= */
+const LS_KEY="casaEquip_v1";
+/* ---- Preferências de acessibilidade (letra, contraste, modo escuro) ---- */
+const PREFS_KEY="casaEquip_prefs";
+let PREFS={fonte:0,contraste:false,escuro:false};
+try{Object.assign(PREFS,JSON.parse(localStorage.getItem(PREFS_KEY))||{})}catch(e){}
+function aplicarPrefs(){
+  document.body.classList.toggle("fs1",PREFS.fonte===1);
+  document.body.classList.toggle("fs2",PREFS.fonte===2);
+  document.body.classList.toggle("contraste",PREFS.contraste);
+  document.body.classList.toggle("escuro",PREFS.escuro);
+  const el=document.getElementById("a11y");
+  if(el)el.innerHTML=`
+    <button title="Tamanho da letra (3 níveis)" onclick="PREFS.fonte=(PREFS.fonte+1)%3;gravarPrefs()">A${PREFS.fonte===1?"+":PREFS.fonte===2?"++":""}</button>
+    <button class="${PREFS.contraste?"on":""}" title="Alto contraste" onclick="PREFS.contraste=!PREFS.contraste;gravarPrefs()">◐</button>
+    <button class="${PREFS.escuro?"on":""}" title="Modo escuro" onclick="PREFS.escuro=!PREFS.escuro;gravarPrefs()">🌙</button>`;
+}
+function gravarPrefs(){localStorage.setItem(PREFS_KEY,JSON.stringify(PREFS));aplicarPrefs();}
+aplicarPrefs();
+const SEED_V="2026-08-06.18"; // versão dos dados publicados pelo Claude — incrementar a cada atualização
+const DEFAULTS={
+  tarifaKwh:0.17,
+  categorias:["Cozinha","Lavandaria","Climatização e águas","Exterior","Entretenimento","Informática e mobilidade","Pequenos eletrodomésticos","Outros"],
+  tipos:["Grande eletrodoméstico","Pequeno eletrodoméstico","Climatização/AQS","Eletrónica","Rede/Informática","Exterior/Jardim","Outro"],
+  compartimentos:["Cozinha","Lavandaria","Sala","Quarto","Escritório","Casa técnica","Casa de banho","Exterior/Jardim","Piscina","Portátil/Vários"]
+};
+const ICONES={"Cozinha":"🍽️","Lavandaria":"🧺","Climatização e águas":"🌡️","Exterior":"🌿","Entretenimento":"📺","Informática e mobilidade":"💻","Pequenos eletrodomésticos":"🔌","Outros":"📦"};
+function novoEquip(p){return Object.assign({
+  id:"e"+Date.now()+Math.random().toString(36).slice(2,6),
+  nome:"",marca:"",modelo:"",referencia:"",numeroSerie:"",
+  categoria:"Outros",tipo:"Outro",compartimento:"",utilidade:"",
+  dataCompra:"",loja:"",preco:"",garantiaMeses:24,garantiaNotas:"",valorSubstituicao:"",
+  caracteristicas:"",classeEnergetica:"",consumoAnualKwh:"",consumoCicloKwh:"",standbyW:"",consumoAgua:"",ruidoDb:"",ligacoes:"",
+  comoFazer:"",links:[],
+  contactoFabricante:"",contactoAssistencia:"",siteRegisto:"",
+  avarias:[],manutencoes:[],
+  rede:"Nenhuma",appFabricante:"",apiDisponivel:"",compatibilidades:"",estadoIot:"Não ligado",
+  fotoEquip:"",fotoEtiqueta:"",notas:"",arquivado:false,
+  criadoEm:new Date().toISOString().slice(0,10),atualizadoEm:new Date().toISOString().slice(0,10)
+},p||{});}
+function seed(){
+  const mk=(nome,categoria,tipo,compartimento,manut)=>novoEquip({nome,categoria,tipo,compartimento,manutencoes:manut||[]});
+  return [
+    novoEquip({nome:"Máquina de lavar loiça",categoria:"Cozinha",tipo:"Grande eletrodoméstico",compartimento:"Cozinha",
+      marca:"Siemens (iQ700)",modelo:"SN87TX02CE/45",referencia:"Type SD6PW1S · FD 0504 (fab. abr/2025)",numeroSerie:"015040396…(confirmar na etiqueta)",
+      caracteristicas:"Totalmente integrável 60 cm · 14 conjuntos · 598×550×815 mm · Secagem Zeolith, varioSpeed Plus, glassZone, emotionLight · Programas: Eco 50°, Auto 45–65°, Intensivo 70°, Rápido 60°, Silence, Hygiene+ · Fabricante: BSH Hausgeräte GmbH, Made in Germany",
+      classeEnergetica:"A",consumoAnualKwh:112,consumoCicloKwh:0.54,consumoAgua:"9,5 L/ciclo",ruidoDb:42,
+      ligacoes:"220–240 V · 50–60 Hz · 2000–2400 W · 10 A · água fria + esgoto",
+      links:[{label:"Página do produto (Siemens PT)",url:"https://www.siemens-home.bsh-group.com/pt/pt/mkt-product/maquinas-de-lavar-loica/maquinas-de-lavar-loica-de-integrar/maquinas-de-lavar-loica-totalmente-integraveis/fully-integrated-60-cm-width/SN87TX02CE"},{label:"Manuais e apoio (pesquisar E-Nr)",url:"https://www.siemens-home.bsh-group.com/pt/apoio-ao-consumidor/apoio"},{label:"Agendar reparação",url:"https://www.siemens-home.bsh-group.com/pt/apoio-ao-consumidor/reparacao/agendar-reparacao"}],
+      contactoFabricante:"BSH/Siemens PT · Rua do Alto do Montijo 15, 2790-012 Carnaxide",
+      contactoAssistencia:"214 250 720 · peças: bshp.pecas@bshg.com",
+      siteRegisto:"https://www.siemens-home.bsh-group.com/pt/apoio-ao-consumidor/apoio",
+      rede:"Wi-Fi",appFabricante:"Home Connect",apiDisponivel:"Sim — Home Connect API",compatibilidades:"Home Assistant, Alexa, Google Home",estadoIot:"Não ligado",
+      manutencoes:[{tarefa:"Repor sal e abrilhantador",freqMeses:1,ultima:"",consumivel:""},{tarefa:"Limpar filtro",freqMeses:3,ultima:"",consumivel:""}]}),
+    mk("Máquina de lavar roupa","Lavandaria","Grande eletrodoméstico","Lavandaria",[{tarefa:"Limpar filtro e gaveta detergente",freqMeses:3,ultima:"",consumivel:""},{tarefa:"Ciclo de limpeza 90°",freqMeses:2,ultima:"",consumivel:""}]),
+    novoEquip({nome:"Máquina de secar roupa",categoria:"Lavandaria",tipo:"Grande eletrodoméstico",compartimento:"Lavandaria",
+      marca:"Miele",modelo:"TCC364WP (T1, bomba de calor)",referencia:"Type HT30-W · M.No 12130600 · Branco lótus",numeroSerie:"50/178626224",
+      caracteristicas:"Máquina de secar com bomba de calor · 9 kg · EcoDry (permutador sem manutenção) · Motor ProfiEco · PerfectDry · Programa algodão standard: 215 min · Ruído 66 dB(A)",
+      classeEnergetica:"A++",consumoAnualKwh:225,consumoCicloKwh:1.92,ruidoDb:66,
+      ligacoes:"220–240 V~ · 50 Hz",
+      notas:"Classe energética indicada como A++ na etiqueta antiga / A na ficha Miele atual — confirmar na etiqueta energética. Permutador de calor sem manutenção (EcoDry).",
+      links:[{label:"Página do produto (Miele PT)",url:"https://www.miele.pt/e/maquina-de-secar-roupa-com-bomba-de-calor-t1-tcc364wp-9kg-branco-lotus-12130600-p"},{label:"Ficha técnica (PDF Miele)",url:"https://media.miele.com/downloads/t-/pt/FS_12130600_PTP_PT-pt-PT.pdf"},{label:"Miele Service (manuais, assistência)",url:"https://www.miele.pt/domestic/apoio-ao-cliente-385.htm"}],
+      contactoFabricante:"Miele Portugal, Lda. · Av. do Forte 5, 2790-073 Carnaxide",
+      contactoAssistencia:"Miele PT: 214 248 100 · www.miele.pt/service",
+      siteRegisto:"https://www.miele.pt/domestic/registo-de-aparelhos-2547.htm",
+      rede:"Nenhuma",appFabricante:"Miele app (confirmar se este modelo tem WiFiConn@ct)",apiDisponivel:"A confirmar",compatibilidades:"",estadoIot:"Não ligado",
+      manutencoes:[{tarefa:"Limpar filtros de cotão (porta e base)",freqMeses:1,ultima:"",consumivel:""},{tarefa:"Verificar/limpar zona do filtro inferior",freqMeses:3,ultima:"",consumivel:""}]}),
+    novoEquip({nome:"Frigorífico",categoria:"Cozinha",tipo:"Grande eletrodoméstico",compartimento:"Cozinha",
+      marca:"Siemens (iQ700)",modelo:"KI81FHOD0/03",referencia:"Type KG KIFF29AW · FD 0502 (fab. fev/2025) · Z-Nr 00053",numeroSerie:"255020391159000538",
+      caracteristicas:"Frigorífico integrável 177,2×55,8×54,5 cm, porta com dobradiça fixa e fecho suave (softClose) · Volume 289 L (refrigeração 206 L + zona 0°C 83 L), sem congelador · hyperFresh Premium 0°C, openAssist (abertura por toque/voz), bottleRack, luz LED, super refrigeração · Classe climática SN-T · Refrigerante R600a 57 g · 71,7 kg · Fabricante: BSH Hausgeräte GmbH, Made in Germany",
+      classeEnergetica:"D",consumoAnualKwh:120,ruidoDb:36,
+      ligacoes:"220–240 V · 50 Hz · 90 W · 0,70 A",
+      links:[{label:"Página do produto (Siemens PT)",url:"https://www.siemens-home.bsh-group.com/pt/pt/mkt-product/frigorificos/frigorificos-e-congeladores-de-integrar/frigorificos-de-integrar/KI81FHOD0"},{label:"Manuais e apoio (pesquisar E-Nr)",url:"https://www.siemens-home.bsh-group.com/pt/apoio-ao-consumidor/apoio"},{label:"Agendar reparação",url:"https://www.siemens-home.bsh-group.com/pt/apoio-ao-consumidor/reparacao/agendar-reparacao"}],
+      contactoFabricante:"BSH/Siemens PT · Rua do Alto do Montijo 15, 2790-012 Carnaxide",
+      contactoAssistencia:"214 250 720 · peças: bshp.pecas@bshg.com",
+      siteRegisto:"https://www.siemens-home.bsh-group.com/pt/mysiemens/registar-produto",
+      rede:"Wi-Fi",appFabricante:"Home Connect",apiDisponivel:"Sim — Home Connect API",compatibilidades:"Home Assistant, Alexa, Google Home",estadoIot:"Não ligado",
+      manutencoes:[{tarefa:"Limpar grelha de ventilação e vedantes da porta",freqMeses:6,ultima:"",consumivel:""}]}),
+    novoEquip({nome:"Congelador",categoria:"Cozinha",tipo:"Grande eletrodoméstico",compartimento:"Cozinha",
+      marca:"Siemens (iQ700)",modelo:"GI81NHNE0/02",referencia:"Type KG GIUU22AW · FD 0503 (fab. mar/2025) · Z-Nr 00018",numeroSerie:"255030391139000180",
+      caracteristicas:"Congelador integrável 177,2×55,8×54,5 cm, porta com dobradiça fixa e fecho suave (softClose) · Volume 212 L, noFrost (sem descongelação manual) · varioZone (gavetas/prateleiras reposicionáveis), openAssist (abertura por toque/voz), compressor Intelligent Inverter · Capacidade de congelação 14 kg/24 h · Autonomia em falha de energia: 9 h · Classe climática SN-T · Refrigerante R600a 46 g · Fabricante: BSH Hausgeräte GmbH, Made in Germany",
+      classeEnergetica:"E",consumoAnualKwh:235,ruidoDb:35,
+      ligacoes:"220–240 V · 50 Hz · 120 W (descongelação 170 W) · 1,00 A",
+      notas:"Consumo anual 235 kWh: valor do modelo análogo GI81NACE0 (mesma classe E e volume) — confirmar na etiqueta energética/folha de dados EU.",
+      links:[{label:"Página do produto (Siemens PT)",url:"https://www.siemens-home.bsh-group.com/pt/pt/mkt-product/frigorificos/frigorificos-e-congeladores-de-integrar/congeladores-de-integrar/GI81NHNE0"},{label:"Manuais e apoio (pesquisar E-Nr)",url:"https://www.siemens-home.bsh-group.com/pt/apoio-ao-consumidor/apoio"},{label:"Agendar reparação",url:"https://www.siemens-home.bsh-group.com/pt/apoio-ao-consumidor/reparacao/agendar-reparacao"}],
+      contactoFabricante:"BSH/Siemens PT · Rua do Alto do Montijo 15, 2790-012 Carnaxide",
+      contactoAssistencia:"214 250 720 · peças: bshp.pecas@bshg.com",
+      siteRegisto:"https://www.siemens-home.bsh-group.com/pt/mysiemens/registar-produto",
+      rede:"Wi-Fi",appFabricante:"Home Connect",apiDisponivel:"Sim — Home Connect API",compatibilidades:"Home Assistant, Alexa, Google Home",estadoIot:"Não ligado",
+      manutencoes:[{tarefa:"Limpar grelha de ventilação e vedantes da porta",freqMeses:6,ultima:"",consumivel:""}]}),
+    novoEquip({nome:"Forno 90 cm",categoria:"Cozinha",tipo:"Grande eletrodoméstico",compartimento:"Cozinha",utilidade:"Forno principal 90 cm, pirolítico",
+      marca:"Siemens (iQ500)",modelo:"VB578D0S0/08",referencia:"Type PO9.60 · FD 0503 (fab. mar/2025) · Z-Nr 001964",numeroSerie:"Z-Nr 001964 (nº série completo na fatura/DataMatrix)",
+      caracteristicas:"Forno integrável 90×60 cm (89,6×59,4×57 cm) · 112 L · 10 modos de cozedura (ar quente 4D, convecção, grelhador grande área, pizza, descongelação…) · 50–280 °C · Limpeza pirolítica · Inox/preto · Fabricante: BSH Hausgeräte GmbH, Made in Germany",
+      classeEnergetica:"A+",consumoCicloKwh:0.83,
+      ligacoes:"220–240 / 380–415 V 3N~ · 50–60 Hz · 4,2 kW",
+      notas:"Consumo por ciclo (ficha comercial): 0,83 kWh convencional · 1,4 kWh convecção forçada.",
+      links:[{label:"Ficha do produto (Darty PT)",url:"https://darty.pt/products/forno-eletrico-encastravel-siemens-vb578d0s0-iq500-90x60-cm-a-inox-preto-4242003803349"},{label:"Manuais e apoio (pesquisar E-Nr)",url:"https://www.siemens-home.bsh-group.com/pt/apoio-ao-consumidor/apoio"},{label:"Agendar reparação",url:"https://www.siemens-home.bsh-group.com/pt/apoio-ao-consumidor/reparacao/agendar-reparacao"}],
+      contactoFabricante:"BSH/Siemens PT · Rua do Alto do Montijo 15, 2790-012 Carnaxide",
+      contactoAssistencia:"214 250 720 · peças: bshp.pecas@bshg.com",
+      siteRegisto:"https://www.siemens-home.bsh-group.com/pt/mysiemens/registar-produto",
+      rede:"Nenhuma",appFabricante:"",apiDisponivel:"Não",compatibilidades:"",estadoIot:"Não ligado",
+      manutencoes:[{tarefa:"Ciclo de limpeza pirolítica",freqMeses:4,ultima:"",consumivel:""}]}),
+    novoEquip({nome:"Forno 60 cm",categoria:"Cozinha",tipo:"Grande eletrodoméstico",compartimento:"Cozinha",utilidade:"Forno com vapor 100%",
+      marca:"Siemens (iQ700)",modelo:"HS736G3B1/G7",referencia:"Type HT6BAFF0S · FD 0502 (fab. fev/2025) · Z-Nr 00181",numeroSerie:"385020390254001819",
+      caracteristicas:"Forno integrável com vapor 100% · 60×60 cm · 71 L · TouchControl com visor TFT · softClose · Termóstato 30–300 °C · Grelhador, aquecimento sup./inf., função pizza · Limpeza hidrolítica (auto-limpeza) · Fabricante: BSH Hausgeräte GmbH, Made in Germany",
+      classeEnergetica:"A+",consumoCicloKwh:0.69,
+      ligacoes:"220–240 V~ · 50/60 Hz · 3,60 kW",
+      notas:"Consumo por ciclo: 0,69 kWh (ventilação forçada) / 0,87 kWh (convencional).",
+      links:[{label:"Página do produto (Siemens PT)",url:"https://www.siemens-home.bsh-group.com/pt/pt/mkt-product/cozinha/fornos-a-vapor-e-vaporeiras/fornos-a-vapor/HS736G3B1"},{label:"Manuais e apoio (pesquisar E-Nr)",url:"https://www.siemens-home.bsh-group.com/pt/apoio-ao-consumidor/apoio"},{label:"Agendar reparação",url:"https://www.siemens-home.bsh-group.com/pt/apoio-ao-consumidor/reparacao/agendar-reparacao"}],
+      contactoFabricante:"BSH/Siemens PT · Rua do Alto do Montijo 15, 2790-012 Carnaxide",
+      contactoAssistencia:"214 250 720 · peças: bshp.pecas@bshg.com",
+      siteRegisto:"https://www.siemens-home.bsh-group.com/pt/mysiemens/registar-produto",
+      rede:"Nenhuma",appFabricante:"",apiDisponivel:"Não",compatibilidades:"",estadoIot:"Não ligado",
+      manutencoes:[{tarefa:"Limpeza hidrolítica + descalcificar sistema de vapor",freqMeses:3,ultima:"",consumivel:""}]}),
+    novoEquip({nome:"Micro-ondas",categoria:"Cozinha",tipo:"Grande eletrodoméstico",compartimento:"Cozinha",utilidade:"Micro-ondas de encastre com grill",
+      marca:"Siemens (iQ700)",modelo:"BE732R1B1/06",referencia:"Type SS-46W · FD 0503 (fab. mar/2025) · Z-Nr B27093 · dobradiça à direita",numeroSerie:"Z-Nr B27093 (nº série completo na fatura/DataMatrix)",
+      caracteristicas:"Micro-ondas integrável com grill · 21 L · Micro 900 W (níveis 90/180/360/600/900 + Boost, tecnologia Inverter) · Grill 1330 W · Base cerâmica sem prato giratório · TouchControl com visor TFT · cookControl · Nicho 60×45 cm · Total 2050 W · 2460 MHz · Fabricante: BSH Hausgeräte GmbH, Made in UK",
+      ligacoes:"220–240 V~ · 50/60 Hz · 2050 W",
+      links:[{label:"Página do produto (Siemens ES — modelo idêntico)",url:"https://www.siemens-home.bsh-group.com/es/es/product/cocina/hornos/compactos/BE732R1B1"},{label:"Manuais e apoio (pesquisar E-Nr)",url:"https://www.siemens-home.bsh-group.com/pt/apoio-ao-consumidor/apoio"},{label:"Agendar reparação",url:"https://www.siemens-home.bsh-group.com/pt/apoio-ao-consumidor/reparacao/agendar-reparacao"}],
+      contactoFabricante:"BSH/Siemens PT · Rua do Alto do Montijo 15, 2790-012 Carnaxide",
+      contactoAssistencia:"214 250 720 · peças: bshp.pecas@bshg.com",
+      siteRegisto:"https://www.siemens-home.bsh-group.com/pt/mysiemens/registar-produto",
+      rede:"Nenhuma",appFabricante:"",apiDisponivel:"Não",compatibilidades:"",estadoIot:"Não ligado",
+      manutencoes:[]}),
+    novoEquip({nome:"Placa de indução",categoria:"Cozinha",tipo:"Grande eletrodoméstico",compartimento:"Cozinha",utilidade:"Placa de indução com exaustor integrado",
+      marca:"BORA",modelo:"X Pure PUXU2R (Rough)",referencia:"Type PURE · E-Nr 007016-10002 · FD 25DAXW09AF (fab. 2025)",numeroSerie:"FD 25DAXW09AF",
+      caracteristicas:"Placa de indução vitrocerâmica com exaustor de placa integrado · 830×515×199 mm · 4 zonas de indução 230×230 mm (2100 W cada, com função ponte) · Níveis 1–9 + P (placa e exaustor) · Versão Rough (arestas em bruto, para encastre facetado/flush) · Fabricante: BORA Vertriebs GmbH, Innstraße 1, 6342 Niederndorf, Áustria · Made in Germany",
+      classeEnergetica:"",ligacoes:"380–415 V 3N~ (3×16 A) ou 2N~ (2×16 A), ou 220–240 V 1N~ (1×32 A) · 50–60 Hz · 7600 W máx.",
+      comoFazer:"O filtro de gordura em inox pode ir à máquina de lavar loiça. Em modo recirculação, o filtro de carvão ativado substitui-se ~a cada 12 meses (a placa avisa).",
+      links:[{label:"Página do produto (BORA)",url:"https://www.bora.com/en-int/cooktop-extractor-systems/puxu2r"},{label:"BORA X Pure (PT)",url:"https://www.bora.com/pt/pt/bora-sortimentdetailseite/show/bora-x-pure/puxu/"},{label:"Manuais BORA (downloads)",url:"https://www.bora.com/pt/pt/servico/downloads/"}],
+      contactoFabricante:"BORA Vertriebs GmbH & Co KG · support@bora.com · www.bora.com",
+      contactoAssistencia:"support@bora.com · assistência via revendedor/parceiro BORA local",
+      siteRegisto:"https://www.bora.com/pt/pt/servico/registo-do-produto/",
+      rede:"Nenhuma",appFabricante:"",apiDisponivel:"Não",compatibilidades:"",estadoIot:"Não ligado",
+      manutencoes:[{tarefa:"Lavar filtro de gordura inox (máq. loiça)",freqMeses:1,ultima:"",consumivel:""},{tarefa:"Substituir filtro de carvão ativado (se recirculação)",freqMeses:12,ultima:"",consumivel:"Filtro carvão BORA Pure/X Pure"}]}),
+    novoEquip({nome:"Vinoteca",categoria:"Cozinha",tipo:"Grande eletrodoméstico",compartimento:"Cozinha",utilidade:"Garrafeira multi-temperatura de encastre",
+      marca:"Liebherr",modelo:"EWTgb 3583 Vinidor (Index 26A/001)",referencia:"Service-Nr 9968210-01 · AP-Type 2 6309 4 · Fab. 03/2025, Made in Austria",numeroSerie:"86.587.491.4",
+      caracteristicas:"Garrafeira integrável multi-temperatura (nicho 178 cm) · 83 garrafas Bordeaux 0,75 L · Volume útil 276 L (bruto 307 L) · 2 zonas independentes +5 a +20 °C (Vinidor) · 10 prateleiras em faia (8 telescópicas SoftSystem + 1 de apresentação) · Porta de vidro com proteção UV, sem puxador · SuperSilent · Refrigerante R600a 35 g · Classe climática SN",
+      classeEnergetica:"G",consumoAnualKwh:165,ruidoDb:32,
+      ligacoes:"220–240 V~ · 50/60 Hz · 1,5 A",
+      links:[{label:"Página do produto (Liebherr)",url:"https://www.liebherr.com/en-gb/p/ewtgb-3583-3011769"},{label:"Manual (PDF)",url:"https://www.manuals.co.uk/liebherr/ewtgb-3583-vinidor/manual"},{label:"Serviço Liebherr (assistência/peças)",url:"https://home.liebherr.com/pt/prt/pt/servi%C3%A7o/servi%C3%A7o.html"}],
+      contactoFabricante:"Liebherr-Hausgeräte GmbH · Memminger Str. 77-79, D-88416 Ochsenhausen · www.liebherr.com",
+      contactoAssistencia:"Portal MyLiebherr (my.liebherr.com) ou parceiro de assistência local via site Liebherr",
+      siteRegisto:"https://my.liebherr.com",
+      rede:"Nenhuma",appFabricante:"",apiDisponivel:"Não",compatibilidades:"",estadoIot:"Não ligado",
+      manutencoes:[{tarefa:"Substituir filtro de carvão FreshAir",freqMeses:12,ultima:"",consumivel:"Filtro FreshAir Liebherr"},{tarefa:"Limpar grelha de ventilação e interior",freqMeses:6,ultima:"",consumivel:""}]}),
+    novoEquip({nome:"Televisão",categoria:"Entretenimento",tipo:"Eletrónica",compartimento:"Sala",utilidade:"Smart TV da sala",
+      marca:"LG",modelo:"55QNED816QA (QNED81, 55\")",referencia:"55QNED816QA.BEUFLJP · Fabricada 09/2022, montada na Polónia",numeroSerie:"209MAZVQFK97",
+      caracteristicas:"QNED 4K 55'' (Quantum Dot + NanoCell) · Processador α7 Gen5 AI · webOS 22 (ThinQ AI) · HDR10 Pro, HLG, Dolby Vision IQ, Dolby Atmos · AMD FreeSync · Sintonizador satélite · 2× USB, CI+, saída ótica · Potência 165 W máx., 82 W típica",
+      classeEnergetica:"F",consumoAnualKwh:82,
+      ligacoes:"AC 100–240 V · 50/60 Hz · 165 W (típica 82 W) · LAN + Wi-Fi",
+      notas:"Consumo 82 kWh corresponde à etiqueta UE (SDR, por 1000 h de utilização) — aproximação razoável de um ano a ~2,5–3 h/dia.",
+      links:[{label:"Suporte, manuais e garantia (LG PT)",url:"https://www.lg.com/pt/suporte/produto/lg-55QNED816QA.AEU"},{label:"Página do produto (LG PT)",url:"https://www.lg.com/pt/backups/tvs-soundbars/qned/55qned816qa/"}],
+      contactoFabricante:"LG Electronics Portugal · www.lg.com/pt",
+      contactoAssistencia:"LG PT: 300 600 033 (2ª–6ª, 9h–20h) · WhatsApp +351 910 638 551 · pt.cic@lge.com",
+      siteRegisto:"https://www.lg.com/pt/suporte/registo-produto",
+      rede:"Ethernet",appFabricante:"LG ThinQ",apiDisponivel:"Sim — webOS (integração Home Assistant)",compatibilidades:"Home Assistant, Apple AirPlay 2/HomeKit, Alexa, Google Home",estadoIot:"Ligado, sem controlo na app",
+      manutencoes:[]}),
+    novoEquip({nome:"Box MEO (Android TV)",categoria:"Entretenimento",tipo:"Eletrónica",compartimento:"Sala",utilidade:"Box de TV do serviço MEO",
+      marca:"Sagemcom (para MEO)",modelo:"DIW377 — STB4K Wi-Fi Android s/disco",referencia:"Código produto 1700269348 · ALT PT 253964766 · HW 02.00.00 · Fab. 03/2025",numeroSerie:"SGC 625131073845 · MAC 20354363CEB2",
+      caracteristicas:"Set-top box 4K Android TV · Wi-Fi + Ethernet · Dolby Audio · Sem disco · Made in Tunisia · Fabricante: Sagemcom, CS 39000, 92271 Bois-Colombes, França",
+      ligacoes:"Alimentação própria · Ethernet + Wi-Fi · HDMI",
+      notas:"Equipamento do operador (comodato MEO) — em caso de avaria é a MEO que substitui; não tem garantia própria nem valor de substituição a segurar.",
+      links:[{label:"Apoio MEO — equipamentos",url:"https://www.meo.pt/apoio-cliente"}],
+      contactoFabricante:"Sagemcom · reclamations@sagemcom.com",
+      contactoAssistencia:"MEO: 16200 · app MEO ou www.meo.pt/apoio-cliente",
+      rede:"Ethernet",appFabricante:"MEO Go / app MEO",apiDisponivel:"Não",compatibilidades:"",estadoIot:"Ligado, sem controlo na app",
+      manutencoes:[]}),
+    novoEquip({nome:"Bomba de calor total (AQS + piso radiante + AC)",categoria:"Climatização e águas",tipo:"Climatização/AQS",compartimento:"Casa técnica",utilidade:"Aquecimento, arrefecimento e águas quentes sanitárias",
+      marca:"Daikin",modelo:"Altherma 3 R ECH₂O — interior EBSX16P50DF (bizone) + exterior ERLA16DAW17 (16 kW)",referencia:"Interior: MFG No. 2301939, fab. 2023.12, Made in Germany · Exterior: MFG No. 1503978, fab. 2025.01, Made in Belgium · Daikin Europe N.V., Oostende",numeroSerie:"2301939 (interior) · 1503978 (exterior)",
+      caracteristicas:"Unidade interior com depósito térmico integrado de 477 L (classe 500) · AQS higiénica por serpentina de água fresca (36 L) · Bizone: 2 circuitos de aquecimento independentes (ex.: piso radiante + outro) · Tmax 85 °C · Perda estática 1,4 kWh/24h · 95 kg vazio / 572 kg cheio · Refrigerante R32 (p ≤ 4,2 MPa) · IPX4 · Preparada para resistência de apoio EKECBU e ligação solar térmica (estação solar Daikin drain-back instalada — ver foto) · Unidade exterior ERLA16DAW17: 16 kW, R32 3,8 kg (GWP 675 · 2,57 t CO₂eq), 101 kg, IPX4, PS 4,15/3,25 MPa, pressão de água máx. 4 bar, VSD integrado · Classe até A+++ em aquecimento",
+      ligacoes:"Interior: 230 V~ · 50 Hz · 6,3 A · Exterior ERLA16DAW17: 400 V 3N~ · 50 Hz · 14 A (máx. 16 A)",
+      notas:"Estação solar Daikin drain-back confirmada (módulo com visor e comandos junto ao depósito — modelo provável EKSRPS4; a etiqueta lateral pequena precisa de foto de perto para confirmar). Exterior fab. jan/2025 — garantia provavelmente ativa; confirmar data da fatura do instalador. Unidade exterior contém R32 (3,8 kg) — verificação de estanquidade periódica pode ser exigida; confirmar com o instalador. Limpar folhas/detritos do permutador exterior regularmente.",
+      comoFazer:"Controlador MMI no topo (ecrã preto): estado do sistema, pressão da água e caudal. Com placa WLAN opcional, controlo remoto pela app Daikin Onecta.",
+      links:[{label:"Daikin Altherma 3 R ECH₂O (manuais ManualsLib)",url:"https://www.manualslib.com/manual/2523278/Daikin-Altherma-3-R-Ech2o.html"},{label:"Daikin PT — apoio e assistência",url:"https://www.daikin.pt/pt_pt/contactos.html"},{label:"App Onecta",url:"https://www.daikin.pt/pt_pt/residencial/onecta.html"}],
+      contactoFabricante:"Daikin Europe N.V. · Daikin Portugal — www.daikin.pt",
+      contactoAssistencia:"Instalador/manutenção contratada (preencher) · Rede de assistência Daikin PT via www.daikin.pt",
+      siteRegisto:"https://www.daikin.pt/pt_pt/contactos.html",
+      rede:"Nenhuma",appFabricante:"Daikin Onecta (requer placa WLAN opcional)",apiDisponivel:"Sim — Onecta API (integração Home Assistant)",compatibilidades:"Home Assistant (via Onecta)",estadoIot:"Não ligado",
+      manutencoes:[{tarefa:"Verificação técnica anual (obrigatória p/ garantia)",freqMeses:12,ultima:"",consumivel:""},{tarefa:"Verificar pressão do circuito e caudal no MMI",freqMeses:6,ultima:"",consumivel:""},{tarefa:"Limpar filtro magnético/malha do circuito",freqMeses:12,ultima:"",consumivel:""}]}),
+    mk("VMC — Ventilação mecânica central","Climatização e águas","Climatização/AQS","Casa técnica",[{tarefa:"Substituir/limpar filtros",freqMeses:6,ultima:"",consumivel:""}]),
+    novoEquip({nome:"Bomba de calor da piscina",categoria:"Exterior",tipo:"Exterior/Jardim",compartimento:"Piscina",utilidade:"Aquecimento (e arrefecimento) da água da piscina",
+      marca:"AquaX",modelo:"TurboSilence Inverter TSC40T",referencia:"Etiqueta 6020 · TÜV Rheinland ID 1111253628",numeroSerie:"828103781240343022",
+      caracteristicas:"Bomba de calor inverter para piscina · Aquecimento 40 kW (Turbo) / 35 kW (Smart) a ar 26 °C/água 26 °C · 28/24 kW a ar 15 °C · Arrefecimento 16 kW · COP 15,8–6,4 (11,1 a 50% de capacidade — classe A) · Pressão sonora 42,5–51,7 dB(A) a 1 m (43,8 a 50%) · Caudal de água aconselhado 12–18 m³/h · Refrigerante R32 3200 g (GWP 675 · 2,16 t CO₂eq — contém gases fluorados) · IPX4 · 126 kg",
+      ligacoes:"400 V 3~ · 50 Hz · Potência absorvida 0,60–5,94 kW · Corrente máx. 12,5 A · Disjuntor nº 26 (Bomba calor) no quadro",
+      comoFazer:"Ao ligar, faz um auto-teste de ~3 min. Códigos no visor que NÃO são avaria: E3 sem fluxo de água · Ed lembrete anti-congelação · Eb fora da gama de funcionamento · E6 fluxo insuficiente/bomba bloqueada · E5 alimentação anormal. Com ar < 2 °C, garantir sempre circulação de água para não congelar o permutador.",
+      links:[{label:"Manuais TurboSilence/AquaX (QR da etiqueta)",url:"https://www.aquax-pool.com"}],
+      contactoAssistencia:"Instalador da piscina (preencher)",
+      rede:"Nenhuma",appFabricante:"",apiDisponivel:"Não",compatibilidades:"",estadoIot:"Não ligado",
+      notas:"Confirmar fornecedor/instalador e data de instalação para a garantia. Contém gases fluorados (R32, 3,2 kg) — verificação de estanquidade pode ser exigida legalmente; confirmar com o instalador.",
+      manutencoes:[{tarefa:"Limpeza do evaporador e verificação",freqMeses:12,ultima:"",consumivel:""},{tarefa:"Inverno: garantir anti-congelação (fluxo de água ou drenagem)",freqMeses:12,ultima:"",consumivel:""}]}),
+    novoEquip({nome:"Controlador de rega",categoria:"Exterior",tipo:"Exterior/Jardim",compartimento:"Exterior/Jardim",utilidade:"Controlador Wi-Fi da rega automática (Hydrawise)",
+      marca:"Hunter",modelo:"PRO-HC Wi-Fi (PHC-2401-E, 24 zonas)",referencia:"PHC 24 Zone Controller · Etiqueta 215513 · FCC ID 2ADHKRTWINC1500",numeroSerie:"02E79636E4",
+      caracteristicas:"Controlador de rega Wi-Fi para exterior · 24 estações + saída master valve · Ecrã tátil a cores · Plataforma Hydrawise (rega inteligente com previsão meteorológica) · Caixa com fechadura e chave · Fabricante: Hunter Industries, 1940 Diamond Street, San Marcos, CA, EUA",
+      ligacoes:"Entrada 220–240 V~ · 50/60 Hz · 0,18 A · Saída 24 V~ · 0,56 A por estação (máx. total < 1,0 A)",
+      comoFazer:"Gestão e programação pela app/portal Hydrawise (hydrawise.com). No ecrã do controlador: Zones, Settings e Status. A chave da porta está no próprio equipamento.",
+      links:[{label:"Página do produto (Hunter PRO-HC)",url:"https://www.hunterirrigation.com/pt/rega/controladores/pro-hc"},{label:"Portal/app Hydrawise",url:"https://app.hydrawise.com"},{label:"Suporte e manuais Hydrawise",url:"https://support.hydrawise.com"}],
+      contactoFabricante:"Hunter Industries · www.hunterirrigation.com",
+      contactoAssistencia:"Suporte Hydrawise: support.hydrawise.com · ou instalador local de rega",
+      rede:"Wi-Fi",appFabricante:"Hydrawise",apiDisponivel:"Sim — Hydrawise API (integração Home Assistant)",compatibilidades:"Home Assistant, Alexa, Control4",estadoIot:"Ligado, sem controlo na app",
+      manutencoes:[{tarefa:"Verificar aspersores e gotejadores",freqMeses:6,ultima:"",consumivel:""}]}),
+    novoEquip({nome:"Switch de rede (PoE)",categoria:"Informática e mobilidade",tipo:"Rede/Informática",compartimento:"Casa técnica",utilidade:"Switch central da rede cablada, alimenta os APs por PoE",
+      marca:"Ubiquiti (UniFi)",modelo:"USW-Lite-8-PoE — Switch Lite 8 PoE",referencia:"Date code 2451V · MAC 0C:EA:14:C8:4C:84",numeroSerie:"0CEA14C84C84",
+      caracteristicas:"Switch gigabit de 8 portas, 4 com PoE+ 802.3at (orçamento 52 W) · Gestão UniFi Network · Instalado na caixa ATI (disjuntor nº 27 A.T.I.)",
+      ligacoes:"Alimentador próprio · 8× RJ45 Gigabit (4× PoE+)",
+      links:[{label:"Página do produto (Ubiquiti)",url:"https://ui.com/eu/en/switching/standard/usw-lite-8-poe"},{label:"Portal UniFi",url:"https://unifi.ui.com"}],
+      contactoFabricante:"Ubiquiti Inc. · 685 Third Avenue, New York, NY 10017 USA · ui.com",
+      rede:"Ethernet",appFabricante:"UniFi Network",apiDisponivel:"Sim — UniFi Network API (integração Home Assistant)",compatibilidades:"Home Assistant",estadoIot:"Ligado, sem controlo na app",
+      manutencoes:[]}),
+    novoEquip({nome:"Access point Wi-Fi exterior",categoria:"Informática e mobilidade",tipo:"Rede/Informática",compartimento:"Exterior/Jardim",utilidade:"Cobertura Wi-Fi no exterior/jardim",
+      marca:"Ubiquiti (UniFi)",modelo:"UAP-AC-M — UniFi AC Mesh (exterior)",referencia:"Date code 2506V · MAC 1C:6A:1B:70:07:B4 · IPX4",numeroSerie:"1C6A1B7007B4-JcW7Je",
+      caracteristicas:"AP Wi-Fi 5 (AC1200) para exterior, IPX4 · 2 antenas destacáveis omni · Alimentação PoE 24V/48V 0,5 A · Gestão UniFi Network",
+      ligacoes:"PoE 24/48 V · 0,5 A · 1× RJ45",
+      links:[{label:"Página do produto (Ubiquiti)",url:"https://ui.com/eu/en/wifi/outdoor/uap-ac-m"},{label:"Portal UniFi",url:"https://unifi.ui.com"}],
+      contactoFabricante:"Ubiquiti Inc. · 685 Third Avenue, New York, NY 10017 USA · ui.com",
+      rede:"Ethernet",appFabricante:"UniFi Network",apiDisponivel:"Sim — UniFi Network API (integração Home Assistant)",compatibilidades:"Home Assistant",estadoIot:"Ligado, sem controlo na app",
+      manutencoes:[]}),
+    novoEquip({nome:"Access point Wi-Fi interior (teto)",categoria:"Informática e mobilidade",tipo:"Rede/Informática",compartimento:"",utilidade:"Cobertura Wi-Fi interior — AP redondo de teto com anel LED azul",
+      marca:"Ubiquiti (UniFi)",modelo:"U7 Pro — UniFi Wi-Fi 7 Pro (teto)",referencia:"Date code 2513V · MAC 84:78:48:E2:44:F4 · QR jdg-lu8-4rt · Made in Vietnam",numeroSerie:"847848E244F4",
+      caracteristicas:"AP Wi-Fi 7 tri-band (2.4/5/6 GHz, BE9300) · 6 streams espaciais · Montagem em teto, anel LED · Alimentação PoE+ · Uplink 2.5 GbE · Gestão UniFi Network · Verificar se há mais do que uma unidade na casa (fotos mostram AP em duas divisões)",
+      ligacoes:"PoE+ · 1× RJ45 2.5 GbE",
+      links:[{label:"Página do produto (Ubiquiti U7 Pro)",url:"https://ui.com/eu/en/wifi/flagship/u7-pro"},{label:"Portal UniFi",url:"https://unifi.ui.com"}],
+      contactoFabricante:"Ubiquiti Inc. · 685 Third Avenue, New York, NY 10017 USA · ui.com",
+      rede:"Ethernet",appFabricante:"UniFi Network",apiDisponivel:"Sim — UniFi Network API (integração Home Assistant)",compatibilidades:"Home Assistant",estadoIot:"Ligado, sem controlo na app",
+      manutencoes:[]}),
+    novoEquip({nome:"Quadro elétrico — mapa de disjuntores",categoria:"Outros",tipo:"Outro",compartimento:"Casa técnica",utilidade:"Registo dos circuitos do quadro elétrico principal",
+      caracteristicas:"1 Corte geral · 2 Quadro parcial Piso 1 · 3 Quadro parcial Garagem · 4 Quadro parcial Anexo · 5 Geral exterior · 6 Iluminação exterior · 7 Tomada cozinha/churrasqueira · 8 Vídeo porteiro · 9 Geral · 10 Painel solar (resistência) · 11 Painel solar (+ depósito) · 12 Máq. lavar roupa · 13 Painel solar (bomba circuladora/recirculação) · 14 Tomadas lavandaria · 15 Máq. secar roupa · 16 Tomadas sala estar · 17 Tomadas hall entrada/WC/corredor · 18 Tomadas sala jantar · 19 Elevador · 20 Iluminação roupeiro · 21 Piso radiante lavandaria · 22 Micro-ondas · 23 Forno · 24 Piso radiante corredor · 25 Frigorífico/arca vertical · 26 Bomba de calor · 27 A.T.I. · 28 Intrusão · 29 V.C. sala estar · 30 V.C. hall entrada · 31 V.C. sala jantar · 32 Vinoteca · 33 Máq. lavar loiça · 34 Placa · 35 V.C. cozinha · 36 Forno-copa · 37 Máq. secar roupa · 38 CCTV · 39 Iluminação · 40 Estores · 41 Domótica · 42 Iluminação · 43 Reserva",
+      notas:"Transcrito da lista manuscrita afixada no quadro (fotos 08/2026). V.C. = ventiloconvector (a confirmar). Nº 37 'Máq. secar roupa' repete o nº 15 — confirmar qual é o efetivo.",
+      manutencoes:[{tarefa:"Testar botão de teste dos diferenciais",freqMeses:6,ultima:"",consumivel:""}]}),
+    mk("Aspirador","Pequenos eletrodomésticos","Pequeno eletrodoméstico","Portátil/Vários",[{tarefa:"Limpar/substituir filtros",freqMeses:6,ultima:"",consumivel:""}]),
+    novoEquip({nome:"Aspirador portátil",categoria:"Pequenos eletrodomésticos",tipo:"Pequeno eletrodoméstico",compartimento:"Portátil/Vários",utilidade:"Aspirador de mão sem fios",
+      marca:"Bosch",modelo:"Move 14.4V (BHN14N/04)",referencia:"Type VXAS021V14 · FD 0201 (fab. jan/2022) · Z-Nr 008847 · Made in China",numeroSerie:"Z-Nr 008847",
+      caracteristicas:"Aspirador de mão sem fios · Bateria 14,4 V · 125 W · Depósito sem saco, filtro lavável · Carregador 22 V / 200 mA · Fabricante: BSH Hausgeräte GmbH (A Bosch Company)",
+      ligacoes:"Carregador 22 V ⎓ 200 mA",
+      comoFazer:"Filtro e depósito laváveis em água — deixar secar bem antes de recolocar.",
+      links:[{label:"Manuais e peças (Bosch — pesquisar BHN14N)",url:"https://www.bosch-home.pt/apoio-ao-consumidor"},{label:"Peças e acessórios BSH",url:"https://www.bosch-home.pt/loja-de-pecas-e-acessorios"}],
+      contactoFabricante:"BSH Hausgeräte GmbH · Carl-Wery-Straße 34, 81739 München · bosch-home.com",
+      contactoAssistencia:"Bosch PT (BSH): 214 250 730",
+      rede:"Nenhuma",appFabricante:"",apiDisponivel:"Não",compatibilidades:"",estadoIot:"Não ligado",
+      manutencoes:[{tarefa:"Lavar filtro e depósito",freqMeses:3,ultima:"",consumivel:""}]}),
+    novoEquip({nome:"Computador portátil",categoria:"Informática e mobilidade",tipo:"Rede/Informática",compartimento:"Escritório",utilidade:"Portátil principal",
+      marca:"Apple",modelo:"MacBook Pro 16'' (2019)",referencia:"Intel Core i9 2,3 GHz 8 núcleos · AMD Radeon Pro 5500M 8 GB + Intel UHD 630 · 32 GB DDR4 2667 MHz",numeroSerie:"C02CP08NMD6T",
+      caracteristicas:"MacBook Pro 16'' (2019) · Intel Core i9 8 núcleos 2,3 GHz · Radeon Pro 5500M 8 GB · 32 GB RAM · macOS Tahoe 26.6 · Cinzento sideral",
+      ligacoes:"USB-C/Thunderbolt 3 · Wi-Fi · Bluetooth",
+      comoFazer:"Verificar cobertura/garantia: checkcoverage.apple.com com o nº de série C02CP08NMD6T.",
+      links:[{label:"Suporte Apple",url:"https://support.apple.com/pt-pt"},{label:"Verificar cobertura",url:"https://checkcoverage.apple.com"}],
+      contactoFabricante:"Apple · apple.com/pt",
+      contactoAssistencia:"Suporte Apple · support.apple.com/pt-pt · Apple Store/centros autorizados",
+      siteRegisto:"https://checkcoverage.apple.com",
+      notas:"Modelo de 2019 (Intel) — fora de garantia; Apple classifica como 'vintage' a partir de ~2026: reparações sujeitas a disponibilidade de peças.",
+      rede:"Wi-Fi",appFabricante:"—",apiDisponivel:"—",compatibilidades:"Ecossistema Apple (iCloud…)",estadoIot:"Ligado, sem controlo na app",
+      manutencoes:[]}),
+    novoEquip({nome:"iPad",categoria:"Informática e mobilidade",tipo:"Rede/Informática",compartimento:"Portátil/Vários",utilidade:"Tablet",
+      marca:"Apple",modelo:"iPad Pro 13'' (M5)",referencia:"MDYJ4TY/A",numeroSerie:"K90DVJG9TJ",
+      caracteristicas:"iPad Pro 13'' com chip M5 · iPadOS 27 · Lançado out/2025",
+      ligacoes:"USB-C/Thunderbolt · Wi-Fi · Bluetooth",
+      dataCompra:"2025-10-30",garantiaMeses:12,garantiaNotas:"Garantia limitada Apple expira a 30/10/2026 (confirmado em Definições). Data de compra estimada a partir da garantia — corrigir com a fatura.",
+      comoFazer:"Verificar cobertura/AppleCare: checkcoverage.apple.com com o nº de série K90DVJG9TJ.",
+      links:[{label:"Suporte Apple",url:"https://support.apple.com/pt-pt"},{label:"Verificar cobertura",url:"https://checkcoverage.apple.com"}],
+      contactoFabricante:"Apple · apple.com/pt",
+      contactoAssistencia:"Suporte Apple · support.apple.com/pt-pt · Apple Store/centros autorizados",
+      siteRegisto:"https://checkcoverage.apple.com",
+      rede:"Wi-Fi",appFabricante:"—",apiDisponivel:"—",compatibilidades:"Ecossistema Apple (iCloud, HomeKit…)",estadoIot:"Ligado, sem controlo na app",
+      manutencoes:[]}),
+    novoEquip({nome:"iPhone",categoria:"Informática e mobilidade",tipo:"Rede/Informática",compartimento:"Portátil/Vários",
+      marca:"Apple",modelo:"iPhone 16 Pro Max",referencia:"MYWY#QL/A (QL/A = mercado PT)",numeroSerie:"G4K9GN4RLK",
+      caracteristicas:"Ecrã Super Retina XDR 6,9'' ProMotion · Chip A18 Pro · Câmaras Pro 48 MP · USB-C · Face ID · Lançado set/2024",
+      ligacoes:"USB-C · Wi-Fi · 5G · Bluetooth",
+      comoFazer:"Verificar estado da garantia/AppleCare: checkcoverage.apple.com com o nº de série G4K9GN4RLK.",
+      links:[{label:"Suporte Apple (PT)",url:"https://support.apple.com/pt-pt"},{label:"Verificar cobertura/garantia",url:"https://checkcoverage.apple.com"},{label:"Manual do utilizador iPhone",url:"https://support.apple.com/pt-pt/guide/iphone/welcome/ios"}],
+      contactoFabricante:"Apple Distribution International · www.apple.com/pt",
+      contactoAssistencia:"App Suporte Apple · support.apple.com/pt-pt · Apple Store/centros autorizados",
+      siteRegisto:"https://checkcoverage.apple.com",
+      rede:"Wi-Fi",appFabricante:"—",apiDisponivel:"—",compatibilidades:"Ecossistema Apple (iCloud, HomeKit…)",estadoIot:"Ligado, sem controlo na app",
+      manutencoes:[]}),
+    novoEquip({nome:"Coluna de som portátil",categoria:"Entretenimento",tipo:"Eletrónica",compartimento:"Portátil/Vários",utilidade:"Coluna Bluetooth portátil",
+      marca:"JBL",modelo:"Charge 5",referencia:"Preta · Nº de série na base da coluna (confirmar)",numeroSerie:"",
+      caracteristicas:"Coluna Bluetooth portátil · 40 W RMS (30 W woofer + 10 W tweeter) · IP67 (água e pó) · Bateria 7500 mAh, ~20 h de autonomia · Powerbank integrado (carrega outros dispositivos por USB) · PartyBoost para emparelhar várias colunas JBL",
+      ligacoes:"USB-C (carregamento) · Bluetooth 5.1",
+      links:[{label:"Página do produto (JBL)",url:"https://pt.jbl.com/CHARGE5.html"},{label:"Suporte e manuais JBL",url:"https://support.jbl.com"}],
+      contactoFabricante:"Harman International (JBL) · pt.jbl.com",
+      rede:"Bluetooth",appFabricante:"JBL Portable",apiDisponivel:"Não",compatibilidades:"",estadoIot:"Não ligado",
+      manutencoes:[]})
+  ];
+}
+let DB;
+function migrar(novo,antigo){
+  if(!antigo||!antigo.equipamentos)return novo;
+  const porNome={};antigo.equipamentos.forEach(e=>porNome[e.nome]=e);
+  novo.equipamentos.forEach(e=>{
+    const o=porNome[e.nome];if(o)delete porNome[e.nome];if(!o)return;
+    ["dataCompra","loja","preco","garantiaNotas","valorSubstituicao","fotoEquip","fotoEtiqueta","notas","comoFazer","utilidade","compartimento"].forEach(k=>{if((e[k]===""||e[k]==null)&&o[k])e[k]=o[k];});
+    if(o.garantiaMeses&&o.garantiaMeses!==24&&e.garantiaMeses===24)e.garantiaMeses=o.garantiaMeses;
+    if(o.avarias&&o.avarias.length&&!e.avarias.length)e.avarias=o.avarias;
+    e.manutencoes.forEach(m=>{const om=(o.manutencoes||[]).find(x=>x.tarefa===m.tarefa);if(om&&om.ultima&&!m.ultima)m.ultima=om.ultima;});
+  });
+  // equipamentos criados manualmente na app (não existem na nova versão) são preservados
+  Object.values(porNome).forEach(o=>{if(o.criadoManual)novo.equipamentos.push(o);});
+  if(antigo.settings&&antigo.settings.tarifaKwh)novo.settings.tarifaKwh=antigo.settings.tarifaKwh;
+  return novo;
+}
+function load(){
+  let ant=null;try{ant=JSON.parse(localStorage.getItem(LS_KEY))}catch(e){}
+  if(ant&&ant.seedV===SEED_V){DB=ant;return;}
+  DB=migrar({seedV:SEED_V,settings:JSON.parse(JSON.stringify(DEFAULTS)),equipamentos:seed()},ant);
+  if(ant&&ant.syncTs)DB.syncTs=ant.syncTs;
+  save();
+}
+function save(){DB.syncTs=new Date().toISOString();localStorage.setItem(LS_KEY,JSON.stringify(DB));fileWriteDeb();nuvemPushDeb();}
+/* ================= UTILITÁRIOS ================= */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fmtData=d=>d?new Date(d+"T00:00").toLocaleDateString("pt-PT"):"—";
+const fmtEur=v=>v===""||v==null||isNaN(v)?"—":Number(v).toLocaleString("pt-PT",{style:"currency",currency:"EUR"});
+function addMeses(iso,m){const d=new Date(iso+"T00:00");d.setMonth(d.getMonth()+Number(m));return d;}
+function fimGarantia(e){if(!e.dataCompra||!e.garantiaMeses)return null;return addMeses(e.dataCompra,e.garantiaMeses);}
+function estadoGarantia(e){
+  const f=fimGarantia(e);if(!f)return{cls:"grey",txt:"Sem dados"};
+  const dias=Math.floor((f-new Date())/864e5);
+  if(dias<0)return{cls:"grey",txt:"Expirada "+f.toLocaleDateString("pt-PT")};
+  if(dias<=60)return{cls:"warn",txt:"Expira em "+dias+" dias",dias};
+  return{cls:"ok",txt:"Até "+f.toLocaleDateString("pt-PT")};
+}
+function proximaManut(m){if(!m.ultima)return null;return addMeses(m.ultima,m.freqMeses);}
+function manutEstado(m){
+  const p=proximaManut(m);if(!p)return{cls:"grey",txt:"Sem registo"};
+  const dias=Math.floor((p-new Date())/864e5);
+  if(dias<0)return{cls:"bad",txt:"Em atraso ("+p.toLocaleDateString("pt-PT")+")",dias};
+  if(dias<=14)return{cls:"warn",txt:"Em "+dias+" dias",dias};
+  return{cls:"ok",txt:p.toLocaleDateString("pt-PT")};
+}
+function completude(e){
+  let t=0,p=0;const chk=v=>{t++;if(v!==""&&v!=null)p++;};
+  ["marca","modelo","numeroSerie","dataCompra","compartimento","classeEnergetica","contactoAssistencia"].forEach(k=>chk(e[k]));
+  return Math.round(p/t*100);
+}
+function alertas(){
+  const out=[];
+  DB.equipamentos.filter(e=>!e.arquivado).forEach(e=>{
+    const g=estadoGarantia(e);
+    if(g.cls==="warn")out.push({cls:"warn",eq:e,txt:"Garantia: "+g.txt});
+    e.manutencoes.forEach(m=>{
+      const s=manutEstado(m);
+      if(s.cls==="bad")out.push({cls:"bad",eq:e,txt:m.tarefa+" — "+s.txt});
+      else if(s.cls==="warn")out.push({cls:"warn",eq:e,txt:m.tarefa+" — "+s.txt});
+    });
+  });
+  return out;
+}
+function comprimirImagem(file,cb){
+  const r=new FileReader();
+  r.onload=ev=>{const img=new Image();img.onload=()=>{
+    const MAX=900;let w=img.width,h=img.height;
+    if(w>MAX||h>MAX){const k=MAX/Math.max(w,h);w=Math.round(w*k);h=Math.round(h*k);}
+    const c=document.createElement("canvas");c.width=w;c.height=h;
+    c.getContext("2d").drawImage(img,0,0,w,h);
+    cb(c.toDataURL("image/jpeg",0.75));
+  };img.src=ev.target.result;};
+  r.readAsDataURL(file);
+}
+/* ================= NAVEGAÇÃO ================= */
+let VIEW={name:"dash"};
+const NAVS=[["dash","Painel"],["lista","Equipamentos"],["manut","Manutenção"],["energia","Energia"],["defs","Definições"]];
+function go(v){VIEW=v;render();window.scrollTo(0,0);}
+function render(){
+  $("#nav").innerHTML=NAVS.map(([k,l])=>`<button class="${(VIEW.name===k||(VIEW.name==="ficha"||VIEW.name==="form")&&k==="lista")?"active":""}" onclick='go({name:"${k}"})'>${l}</button>`).join("");
+  const m=$("#main");
+  const banner=(typeof PEDIR_RETOMA!=="undefined"&&PEDIR_RETOMA&&!FILE_HANDLE)?`<div class="card" style="background:#fdf6ec;border-color:#f0d9b0">🔄 Ficheiro de dados ligado anteriormente. <button class="btn small primary" onclick="retomarFicheiro()">Retomar sincronização</button> <button class="btn small" onclick="desligarFicheiro()">Ignorar</button></div>`:"";
+  if(VIEW.name==="dash")m.innerHTML=banner+vDash();
+  else if(VIEW.name==="lista")m.innerHTML=vLista();
+  else if(VIEW.name==="ficha")m.innerHTML=vFicha(VIEW.id,VIEW.tab||"geral");
+  else if(VIEW.name==="form")m.innerHTML=vForm(VIEW.id);
+  else if(VIEW.name==="manut")m.innerHTML=vManut();
+  else if(VIEW.name==="energia")m.innerHTML=vEnergia();
+  else if(VIEW.name==="defs")m.innerHTML=vDefs();
+}
+/* ================= PAINEL ================= */
+function vDash(){
+  const eqs=DB.equipamentos.filter(e=>!e.arquivado);
+  const al=alertas();
+  const porCat={};eqs.forEach(e=>porCat[e.categoria]=(porCat[e.categoria]||0)+1);
+  const incompletos=eqs.filter(e=>completude(e)<60).length;
+  return `
+  <div class="grid cols4" style="margin-bottom:14px">
+    <div class="stat" onclick='go({name:"lista"})'><b>${eqs.length}</b><span>Equipamentos</span></div>
+    <div class="stat" onclick='go({name:"manut"})'><b style="color:${al.length?"var(--warn)":"var(--ok)"}">${al.length}</b><span>Alertas ativos</span></div>
+    <div class="stat" onclick='go({name:"lista",fCompl:1})'><b>${incompletos}</b><span>Fichas por completar</span></div>
+    <div class="stat" onclick='go({name:"energia"})'><b>${fmtEur(custoTotalAnual())}</b><span>Energia estimada/ano</span></div>
+  </div>
+  ${al.length?`<div class="card"><h2>⚠️ Alertas</h2>${al.map(a=>`<div class="alert-item ${a.cls}" onclick='go({name:"ficha",id:"${a.eq.id}",tab:"manut"})'><span class="badge ${a.cls}">${a.cls==="bad"?"Atraso":"Aviso"}</span> <b>${esc(a.eq.nome)}</b> <span class="muted">${esc(a.txt)}</span></div>`).join("")}</div>`:""}
+  <div class="card"><h2>Por categoria</h2><div class="grid cols3">
+    ${DB.settings.categorias.filter(c=>porCat[c]).map(c=>`<div class="stat" onclick='go({name:"lista",fCat:"${esc(c)}"})'><b>${ICONES[c]||"📦"} ${porCat[c]}</b><span>${esc(c)}</span></div>`).join("")}
+  </div></div>
+  <div style="text-align:center"><button class="btn primary" onclick='go({name:"form"})'>＋ Adicionar equipamento</button></div>`;
+}
+/* ================= LISTA ================= */
+let LISTA_F={cat:"",comp:"",tipo:"",q:"",soIncompletos:false,arquivados:false,ord:"nome",agr:false};
+function vLista(){
+  if(VIEW.fCat!==undefined){LISTA_F.cat=VIEW.fCat||"";delete VIEW.fCat;}
+  if(VIEW.fCompl!==undefined){LISTA_F.soIncompletos=true;delete VIEW.fCompl;}
+  const f=LISTA_F;
+  return `
+  <div class="toolbar">
+    <input type="search" placeholder="Pesquisar nome, marca, modelo, nº série…" value="${esc(f.q)}" oninput="LISTA_F.q=this.value;renderListaSo()">
+    <button class="btn primary" onclick='go({name:"form"})'>＋ Adicionar</button>
+  </div>
+  <div class="chips">
+    <select style="width:auto" onchange="LISTA_F.cat=this.value;render()"><option value="">Categoria: todas</option>${DB.settings.categorias.map(c=>`<option ${f.cat===c?"selected":""}>${esc(c)}</option>`).join("")}</select>
+    <select style="width:auto" onchange="LISTA_F.comp=this.value;render()"><option value="">Compartimento: todos</option>${DB.settings.compartimentos.map(c=>`<option ${f.comp===c?"selected":""}>${esc(c)}</option>`).join("")}</select>
+    <select style="width:auto" onchange="LISTA_F.tipo=this.value;render()"><option value="">Tipo: todos</option>${DB.settings.tipos.map(c=>`<option ${f.tipo===c?"selected":""}>${esc(c)}</option>`).join("")}</select>
+    <span class="chip ${f.soIncompletos?"on":""}" onclick="LISTA_F.soIncompletos=!LISTA_F.soIncompletos;render()">Por completar</span>
+    <span class="chip ${f.arquivados?"on":""}" onclick="LISTA_F.arquivados=!LISTA_F.arquivados;render()">Arquivados</span>
+    <select style="width:auto" onchange="LISTA_F.ord=this.value;render()">
+      <option value="nome" ${f.ord==="nome"?"selected":""}>Ordenar: nome (A–Z)</option>
+      <option value="categoria" ${f.ord==="categoria"?"selected":""}>Ordenar: categoria</option>
+      <option value="compartimento" ${f.ord==="compartimento"?"selected":""}>Ordenar: compartimento</option>
+      <option value="ficha" ${f.ord==="ficha"?"selected":""}>Ordenar: ficha incompleta primeiro</option>
+      <option value="garantia" ${f.ord==="garantia"?"selected":""}>Ordenar: fim de garantia</option>
+    </select>
+    <span class="chip ${f.agr?"on":""}" onclick="LISTA_F.agr=!LISTA_F.agr;render()">Agrupar por compartimento</span>
+  </div>
+  <div id="listaEqs">${htmlListaEqs(filtrarEqs())}</div>`;
+}
+function filtrarEqs(){
+  const f=LISTA_F;
+  let eqs=DB.equipamentos.filter(e=>f.arquivados?e.arquivado:!e.arquivado);
+  if(f.cat)eqs=eqs.filter(e=>e.categoria===f.cat);
+  if(f.comp)eqs=eqs.filter(e=>e.compartimento===f.comp);
+  if(f.tipo)eqs=eqs.filter(e=>e.tipo===f.tipo);
+  if(f.soIncompletos)eqs=eqs.filter(e=>completude(e)<60);
+  if(f.q){const q=f.q.toLowerCase();eqs=eqs.filter(e=>[e.nome,e.marca,e.modelo,e.numeroSerie,e.referencia].join(" ").toLowerCase().includes(q));}
+  const porNome=(a,b)=>a.nome.localeCompare(b.nome,"pt");
+  const fimG=e=>{const x=fimGarantia(e);return x?x.getTime():Infinity;};
+  const ord=f.ord||"nome";
+  if(ord==="categoria")eqs.sort((a,b)=>(a.categoria||"").localeCompare(b.categoria||"","pt")||porNome(a,b));
+  else if(ord==="compartimento")eqs.sort((a,b)=>(a.compartimento||"~").localeCompare(b.compartimento||"~","pt")||porNome(a,b));
+  else if(ord==="ficha")eqs.sort((a,b)=>completude(a)-completude(b)||porNome(a,b));
+  else if(ord==="garantia")eqs.sort((a,b)=>fimG(a)-fimG(b)||porNome(a,b));
+  else eqs.sort(porNome);
+  return eqs;
+}
+const letraDe=s=>{const l=(s||"#").normalize("NFD").replace(/[̀-ͯ]/g,"").charAt(0).toUpperCase();return /[A-Z]/.test(l)?l:"#";};
+function saltarLetra(l){
+  const el=document.querySelector(`.equip-card[data-l="${l}"]`);
+  if(el){el.scrollIntoView({behavior:"smooth",block:"center"});el.style.outline="2px solid var(--accent)";setTimeout(()=>el.style.outline="",1600);}
+}
+function htmlListaEqs(eqs){
+  if(!eqs.length)return `<div class="empty">Nenhum equipamento encontrado.</div>`;
+  const card=e=>{
+    const g=estadoGarantia(e),c=completude(e);
+    return `<div class="equip-card" data-l="${letraDe(e.nome)}" onclick='go({name:"ficha",id:"${e.id}"})'>
+      <div class="thumb">${e.fotoEquip?`<img src="${e.fotoEquip}">`:(ICONES[e.categoria]||"📦")}</div>
+      <div class="info"><b>${esc(e.nome)}</b>
+        <small>${esc([e.marca,e.modelo].filter(Boolean).join(" ")||"— sem marca/modelo —")}</small><br>
+        <small class="muted">${esc(e.compartimento||"")}</small><br>
+        <span class="badge ${g.cls}" style="margin-top:3px">${g.cls==="ok"?"Garantia ✓":g.cls==="warn"?"Garantia!":"Garantia?"}</span>
+        ${c<60?`<span class="badge blue">Ficha ${c}%</span>`:""}
+      </div></div>`;
+  };
+  let corpo;
+  if(LISTA_F.agr){
+    const ordem=[...DB.settings.compartimentos,""];
+    const grupos={};eqs.forEach(e=>{const k=e.compartimento||"";(grupos[k]=grupos[k]||[]).push(e);});
+    const chaves=Object.keys(grupos).sort((a,b)=>{const ia=ordem.indexOf(a),ib=ordem.indexOf(b);return (ia<0?99:ia)-(ib<0?99:ib)||a.localeCompare(b,"pt");});
+    corpo=chaves.map(k=>`<div class="grp-h">${esc(k||"Sem compartimento")} · ${grupos[k].length}</div>`+grupos[k].map(card).join("")).join("");
+  }else corpo=eqs.map(card).join("");
+  let idx="";
+  if(!LISTA_F.agr&&(LISTA_F.ord||"nome")==="nome"&&eqs.length>8){
+    const letras=new Set(eqs.map(e=>letraDe(e.nome)));
+    idx=`<div class="idx">${"ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").map(l=>`<button ${letras.has(l)?"":"disabled"} onclick="saltarLetra('${l}')">${l}</button>`).join("")}</div>`;
+  }
+  return idx+`<div class="grid cols3">${corpo}</div>`;
+}
+function renderListaSo(){$("#listaEqs").innerHTML=htmlListaEqs(filtrarEqs());}
+/* ================= FICHA ================= */
+function getEq(id){return DB.equipamentos.find(e=>e.id===id);}
+function vFicha(id,tab){
+  const e=getEq(id);if(!e)return `<div class="empty">Equipamento não encontrado.</div>`;
+  const g=estadoGarantia(e);
+  const tabs=[["geral","Geral"],["tecnica","Técnica"],["docs","Documentos"],["assist","Assistência"],["manut","Manutenção"],["iot","Conectividade"]];
+  return `
+  <div class="toolbar">
+    <button class="btn small" onclick='go({name:"lista"})'>← Lista</button>
+    <div style="flex:1"></div>
+    <button class="btn small" onclick='go({name:"form",id:"${e.id}"})'>✏️ Editar</button>
+    <button class="btn small" onclick='duplicarEq("${e.id}")'>⧉ Duplicar</button>
+    <button class="btn small" onclick='arquivarEq("${e.id}")'>${e.arquivado?"↩︎ Restaurar":"🗄 Arquivar"}</button>
+    <button class="btn small danger" onclick='apagarEq("${e.id}")'>🗑 Apagar</button>
+  </div>
+  <div class="card">
+    <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap">
+      <div class="thumb" style="width:72px;height:72px;font-size:34px">${e.fotoEquip?`<img src="${e.fotoEquip}">`:(ICONES[e.categoria]||"📦")}</div>
+      <div style="flex:1">
+        <h2 style="margin:0">${esc(e.nome)}</h2>
+        <div class="muted">${esc([e.marca,e.modelo,e.referencia].filter(Boolean).join(" · ")||"Marca/modelo por preencher")}</div>
+        <div class="mt" style="margin-top:6px">
+          <span class="badge blue">${esc(e.categoria)}</span>
+          ${e.compartimento?`<span class="badge grey">${esc(e.compartimento)}</span>`:""}
+          <span class="badge ${g.cls}">Garantia: ${g.txt}</span>
+          <span class="badge ${completude(e)<60?"warn":"ok"}">Ficha ${completude(e)}%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="tabs">${tabs.map(([k,l])=>`<button class="${tab===k?"active":""}" onclick='go({name:"ficha",id:"${e.id}",tab:"${k}"})'>${l}</button>`).join("")}</div>
+  <div class="card">${fichaTab(e,tab)}</div>`;
+}
+function kv(pairs){return `<dl class="kv">${pairs.map(([k,v])=>`<dt>${k}</dt><dd>${v||"—"}</dd>`).join("")}</dl>`;}
+function fichaTab(e,tab){
+  if(tab==="geral")return kv([
+    ["Marca",esc(e.marca)],["Modelo",esc(e.modelo)],["Referência",esc(e.referencia)],["Nº de série",esc(e.numeroSerie)],
+    ["Categoria",esc(e.categoria)],["Tipo",esc(e.tipo)],["Compartimento",esc(e.compartimento)],["Utilidade",esc(e.utilidade)],
+    ["Data de compra",fmtData(e.dataCompra)],["Loja",esc(e.loja)],["Preço",fmtEur(e.preco)],
+    ["Garantia",e.garantiaMeses?e.garantiaMeses+" meses":"—"],["Fim de garantia",fimGarantia(e)?fimGarantia(e).toLocaleDateString("pt-PT"):"—"],
+    ["Notas de garantia",esc(e.garantiaNotas)],["Valor de substituição",fmtEur(e.valorSubstituicao)],["Notas",esc(e.notas)]
+  ])+(e.fotoEtiqueta?`<h3>Foto da etiqueta</h3><img class="photo-preview" src="${e.fotoEtiqueta}" style="max-width:320px;max-height:320px">`:"");
+  if(tab==="tecnica")return kv([
+    ["Características",esc(e.caracteristicas)],["Classe energética",esc(e.classeEnergetica)],
+    ["Consumo anual",e.consumoAnualKwh?e.consumoAnualKwh+" kWh/ano ≈ "+fmtEur(e.consumoAnualKwh*DB.settings.tarifaKwh)+"/ano":"—"],
+    ["Consumo por ciclo",e.consumoCicloKwh?e.consumoCicloKwh+" kWh":"—"],["Standby",e.standbyW?e.standbyW+" W":"—"],
+    ["Consumo de água",esc(e.consumoAgua)],["Ruído",e.ruidoDb?e.ruidoDb+" dB":"—"],["Ligações",esc(e.ligacoes)]
+  ]);
+  if(tab==="docs"){
+    const localDoc=`<p class="muted">📁 Arquivo local: pasta <b>Documentacao</b> ao lado desta app · <a href="Documentacao/Arquivo_Documentacao.html" target="_blank">abrir índice do arquivo</a></p>`;
+    const links=localDoc+(e.links.length?`<table><tr><th>Documento</th><th>Ligação</th></tr>${e.links.map(l=>`<tr><td>${esc(l.label)}</td><td><a href="${esc(l.url)}" target="_blank">${esc(l.url)}</a></td></tr>`).join("")}</table>`:`<p class="muted">Sem documentos. Edita a ficha para adicionar ligações (manual, fatura, ficha técnica…).</p>`);
+    return links+`<h3>Como fazer / dicas</h3><div style="white-space:pre-wrap">${esc(e.comoFazer)||"<span class='muted'>Sem notas.</span>"}</div>`;
+  }
+  if(tab==="assist"){
+    const av=e.avarias.length?`<table><tr><th>Data</th><th>Descrição</th><th>Custo</th><th>Quem</th></tr>${e.avarias.map(a=>`<tr><td>${fmtData(a.data)}</td><td>${esc(a.descricao)}</td><td>${fmtEur(a.custo)}</td><td>${esc(a.quem)}</td></tr>`).join("")}</table>`:`<p class="muted">Sem avarias registadas. 🎉</p>`;
+    return kv([["Contacto do fabricante",esc(e.contactoFabricante)],["Assistência técnica",esc(e.contactoAssistencia)],["Registo do produto",e.siteRegisto?`<a href="${esc(e.siteRegisto)}" target="_blank">${esc(e.siteRegisto)}</a>`:"—"]])+`<h3>Histórico de avarias/reparações</h3>`+av;
+  }
+  if(tab==="manut"){
+    if(!e.manutencoes.length)return `<p class="muted">Sem tarefas de manutenção. Edita a ficha para adicionar.</p>`;
+    return `<table><tr><th>Tarefa</th><th>Frequência</th><th>Última</th><th>Próxima</th><th></th></tr>${e.manutencoes.map((m,i)=>{
+      const s=manutEstado(m);
+      return `<tr><td><b>${esc(m.tarefa)}</b>${m.consumivel?`<br><small class="muted">Consumível: ${esc(m.consumivel)}</small>`:""}</td><td>${m.freqMeses} meses</td><td>${fmtData(m.ultima)}</td><td><span class="badge ${s.cls}">${s.txt}</span></td><td class="right"><button class="btn small" onclick='marcarFeita("${e.id}",${i})'>✓ Feita hoje</button></td></tr>`;
+    }).join("")}</table>`;
+  }
+  if(tab==="iot")return kv([
+    ["Ligação à rede",esc(e.rede)],["App do fabricante",esc(e.appFabricante)],["API disponível",esc(e.apiDisponivel)],
+    ["Compatibilidades",esc(e.compatibilidades)],["Estado IoT",`<span class="badge ${e.estadoIot==="Controlável"?"ok":"grey"}">${esc(e.estadoIot)}</span>`]
+  ])+`<p class="muted mt">Preparação para a Fase 4 — quando avançarmos para controlo IoT, os equipamentos "controláveis" ganham comandos aqui.</p>`;
+  return "";
+}
+function marcarFeita(id,i){const e=getEq(id);e.manutencoes[i].ultima=new Date().toISOString().slice(0,10);e.atualizadoEm=e.manutencoes[i].ultima;save();render();}
+function duplicarEq(id){const e=getEq(id);const c=JSON.parse(JSON.stringify(e));c.id="e"+Date.now()+Math.random().toString(36).slice(2,6);c.nome=e.nome+" (cópia)";c.numeroSerie="";DB.equipamentos.push(c);save();go({name:"ficha",id:c.id});}
+function arquivarEq(id){const e=getEq(id);e.arquivado=!e.arquivado;save();go({name:"lista"});}
+function apagarEq(id){const e=getEq(id);if(confirm(`Apagar definitivamente "${e.nome}"? Esta ação não pode ser anulada.`)){DB.equipamentos=DB.equipamentos.filter(x=>x.id!==id);save();go({name:"lista"});}}
+/* ================= FORMULÁRIO ================= */
+let DRAFT=null;
+function vForm(id){
+  DRAFT=id?JSON.parse(JSON.stringify(getEq(id))):novoEquip();
+  const e=DRAFT;
+  const inp=(k,label,type="text",attrs="")=>`<div><label>${label}</label><input type="${type}" ${attrs} value="${esc(e[k])}" oninput='DRAFT["${k}"]=this.value'></div>`;
+  const txt=(k,label)=>`<div><label>${label}</label><textarea oninput='DRAFT["${k}"]=this.value'>${esc(e[k])}</textarea></div>`;
+  const sel=(k,label,ops)=>`<div><label>${label}</label><select onchange='DRAFT["${k}"]=this.value'><option value=""></option>${ops.map(o=>`<option ${e[k]===o?"selected":""}>${esc(o)}</option>`).join("")}</select></div>`;
+  return `
+  <div class="toolbar"><button class="btn small" onclick='cancelarForm("${id||""}")'>← Cancelar</button><div style="flex:1"></div><button class="btn primary" onclick="gravarForm()">💾 Gravar</button></div>
+  <h2 style="margin-bottom:14px">${id?"Editar":"Novo equipamento"}</h2>
+  <details open><summary>Identificação</summary><div class="row">
+    ${inp("nome","Nome de exibição *")}${inp("marca","Marca")}${inp("modelo","Modelo")}${inp("referencia","Referência comercial")}${inp("numeroSerie","Nº de série")}
+  </div>
+  <div class="row">
+    <div><label>Foto do equipamento</label><input type="file" accept="image/*" onchange="fotoForm(this,'fotoEquip')">${e.fotoEquip?`<img class="photo-preview" id="pv_fotoEquip" src="${e.fotoEquip}">`:`<img class="photo-preview" id="pv_fotoEquip" style="display:none">`}</div>
+    <div><label>Foto da etiqueta</label><input type="file" accept="image/*" onchange="fotoForm(this,'fotoEtiqueta')">${e.fotoEtiqueta?`<img class="photo-preview" id="pv_fotoEtiqueta" src="${e.fotoEtiqueta}">`:`<img class="photo-preview" id="pv_fotoEtiqueta" style="display:none">`}</div>
+  </div></details>
+  <details open><summary>Classificação</summary><div class="row">
+    ${sel("categoria","Categoria",DB.settings.categorias)}${sel("tipo","Tipo",DB.settings.tipos)}${sel("compartimento","Compartimento",DB.settings.compartimentos)}${inp("utilidade","Utilidade")}
+  </div></details>
+  <details><summary>Aquisição e garantia</summary><div class="row">
+    ${inp("dataCompra","Data de compra","date")}${inp("loja","Loja/fornecedor")}${inp("preco","Preço (€)","number",'step="0.01"')}${inp("garantiaMeses","Garantia (meses)","number")}${inp("valorSubstituicao","Valor de substituição (€)","number",'step="0.01"')}
+  </div>${txt("garantiaNotas","Notas de garantia (extensão, seguro…)")}</details>
+  <details><summary>Características técnicas</summary>
+  ${txt("caracteristicas","Ficha técnica resumida (dimensões, capacidade, potência…)")}
+  <div class="row">
+    ${inp("classeEnergetica","Classe energética")}${inp("consumoAnualKwh","Consumo anual (kWh)","number",'step="0.1"')}${inp("consumoCicloKwh","Consumo/ciclo (kWh)","number",'step="0.01"')}${inp("standbyW","Standby (W)","number",'step="0.1"')}${inp("consumoAgua","Consumo de água")}${inp("ruidoDb","Ruído (dB)","number")}
+  </div>${txt("ligacoes","Ligações (elétrica, água, esgoto, gás, rede)")}</details>
+  <details><summary>Documentos e "Como fazer"</summary>
+  <div id="linksBox">${linksHtml()}</div>
+  <button class="btn small mt" onclick='DRAFT.links.push({label:"",url:""});$("#linksBox").innerHTML=linksHtml()'>＋ Ligação (manual, fatura…)</button>
+  ${txt("comoFazer","Como fazer / dicas / programas favoritos")}</details>
+  <details><summary>Assistência</summary><div class="row">
+    ${inp("contactoFabricante","Contacto do fabricante")}${inp("contactoAssistencia","Assistência técnica")}${inp("siteRegisto","Site de registo do produto","url")}
+  </div>
+  <h3>Avarias/reparações</h3><div id="avariasBox">${avariasHtml()}</div>
+  <button class="btn small mt" onclick='DRAFT.avarias.push({data:"",descricao:"",custo:"",quem:""});$("#avariasBox").innerHTML=avariasHtml()'>＋ Avaria</button></details>
+  <details><summary>Manutenção periódica</summary><div id="manutBox">${manutHtml()}</div>
+  <button class="btn small mt" onclick='DRAFT.manutencoes.push({tarefa:"",freqMeses:6,ultima:"",consumivel:""});$("#manutBox").innerHTML=manutHtml()'>＋ Tarefa</button></details>
+  <details><summary>Conectividade (preparação IoT)</summary><div class="row">
+    ${sel("rede","Ligação à rede",["Nenhuma","Wi-Fi","Ethernet","Bluetooth","Zigbee/Z-Wave","Outra"])}${inp("appFabricante","App do fabricante")}${inp("apiDisponivel","API / integração disponível")}${inp("compatibilidades","Compatibilidades (HA, HomeKit…)")}${sel("estadoIot","Estado IoT",["Não ligado","Ligado, sem controlo na app","Controlável"])}
+  </div></details>
+  ${txt("notas","Notas gerais")}
+  <div class="mt" style="text-align:right"><button class="btn primary" onclick="gravarForm()">💾 Gravar</button></div>`;
+}
+function linksHtml(){return DRAFT.links.map((l,i)=>`<div class="item-row">
+  <input placeholder="Nome (ex.: Manual PDF)" value="${esc(l.label)}" oninput='DRAFT.links[${i}].label=this.value' style="flex:1">
+  <input placeholder="https://…" value="${esc(l.url)}" oninput='DRAFT.links[${i}].url=this.value' style="flex:2">
+  <button class="btn small danger" onclick='DRAFT.links.splice(${i},1);$("#linksBox").innerHTML=linksHtml()'>✕</button></div>`).join("")||`<p class="muted">Sem ligações.</p>`;}
+function avariasHtml(){return DRAFT.avarias.map((a,i)=>`<div class="item-row">
+  <input type="date" value="${esc(a.data)}" oninput='DRAFT.avarias[${i}].data=this.value' style="max-width:150px">
+  <input placeholder="Descrição" value="${esc(a.descricao)}" oninput='DRAFT.avarias[${i}].descricao=this.value' style="flex:2">
+  <input type="number" step="0.01" placeholder="€" value="${esc(a.custo)}" oninput='DRAFT.avarias[${i}].custo=this.value' style="max-width:90px">
+  <input placeholder="Quem reparou" value="${esc(a.quem)}" oninput='DRAFT.avarias[${i}].quem=this.value' style="flex:1">
+  <button class="btn small danger" onclick='DRAFT.avarias.splice(${i},1);$("#avariasBox").innerHTML=avariasHtml()'>✕</button></div>`).join("")||`<p class="muted">Sem avarias.</p>`;}
+function manutHtml(){return DRAFT.manutencoes.map((m,i)=>`<div class="item-row">
+  <input placeholder="Tarefa" value="${esc(m.tarefa)}" oninput='DRAFT.manutencoes[${i}].tarefa=this.value' style="flex:2">
+  <input type="number" min="1" title="Frequência em meses" value="${esc(m.freqMeses)}" oninput='DRAFT.manutencoes[${i}].freqMeses=this.value' style="max-width:80px">
+  <input type="date" title="Última execução" value="${esc(m.ultima)}" oninput='DRAFT.manutencoes[${i}].ultima=this.value' style="max-width:150px">
+  <input placeholder="Consumível (ref., onde comprar)" value="${esc(m.consumivel)}" oninput='DRAFT.manutencoes[${i}].consumivel=this.value' style="flex:2">
+  <button class="btn small danger" onclick='DRAFT.manutencoes.splice(${i},1);$("#manutBox").innerHTML=manutHtml()'>✕</button></div>`).join("")||`<p class="muted">Sem tarefas.</p>`;}
+function fotoForm(input,campo){
+  const f=input.files[0];if(!f)return;
+  comprimirImagem(f,url=>{DRAFT[campo]=url;const pv=$("#pv_"+campo);pv.src=url;pv.style.display="block";});
+}
+function gravarForm(){
+  if(!DRAFT.nome.trim()){alert("O nome de exibição é obrigatório.");return;}
+  DRAFT.links=DRAFT.links.filter(l=>l.label||l.url);
+  DRAFT.avarias=DRAFT.avarias.filter(a=>a.descricao||a.data);
+  DRAFT.manutencoes=DRAFT.manutencoes.filter(m=>m.tarefa);
+  DRAFT.atualizadoEm=new Date().toISOString().slice(0,10);
+  const i=DB.equipamentos.findIndex(e=>e.id===DRAFT.id);
+  if(i>=0)DB.equipamentos[i]=DRAFT;else{DRAFT.criadoManual=true;DB.equipamentos.push(DRAFT);}
+  save();go({name:"ficha",id:DRAFT.id});
+}
+function cancelarForm(id){id?go({name:"ficha",id}):go({name:"lista"});}
+/* ================= MANUTENÇÃO GLOBAL ================= */
+function vManut(){
+  const linhas=[];
+  DB.equipamentos.filter(e=>!e.arquivado).forEach(e=>e.manutencoes.forEach((m,i)=>{
+    const s=manutEstado(m);const p=proximaManut(m);
+    linhas.push({e,m,i,s,ord:p?p.getTime():Infinity});
+  }));
+  linhas.sort((a,b)=>a.ord-b.ord);
+  if(!linhas.length)return `<div class="empty">Sem tarefas de manutenção definidas.<br>Adiciona-as na ficha de cada equipamento.</div>`;
+  return `<div class="card"><h2>🛠 Plano de manutenção</h2>
+  <table><tr><th>Equipamento</th><th>Tarefa</th><th>Frequência</th><th>Última</th><th>Próxima</th><th></th></tr>
+  ${linhas.map(({e,m,i,s})=>`<tr>
+    <td><a href="#" onclick='go({name:"ficha",id:"${e.id}",tab:"manut"});return false'>${esc(e.nome)}</a></td>
+    <td>${esc(m.tarefa)}</td><td>${m.freqMeses} m</td><td>${fmtData(m.ultima)}</td>
+    <td><span class="badge ${s.cls}">${s.txt}</span></td>
+    <td class="right"><button class="btn small" onclick='marcarFeita("${e.id}",${i});go({name:"manut"})'>✓ Feita</button></td></tr>`).join("")}
+  </table></div>`;
+}
+/* ================= ENERGIA ================= */
+function custoTotalAnual(){
+  return DB.equipamentos.filter(e=>!e.arquivado&&e.consumoAnualKwh).reduce((s,e)=>s+Number(e.consumoAnualKwh)*DB.settings.tarifaKwh,0);
+}
+function vEnergia(){
+  const eqs=DB.equipamentos.filter(e=>!e.arquivado&&e.consumoAnualKwh).sort((a,b)=>b.consumoAnualKwh-a.consumoAnualKwh);
+  const semDados=DB.equipamentos.filter(e=>!e.arquivado&&!e.consumoAnualKwh).length;
+  const total=custoTotalAnual();
+  const max=eqs.length?Number(eqs[0].consumoAnualKwh):1;
+  return `<div class="card"><h2>⚡ Consumos de energia</h2>
+  <p class="muted">Tarifa: <b>${DB.settings.tarifaKwh} €/kWh</b> (alterar em Definições) · ${semDados?semDados+" equipamentos sem dados de consumo.":""}</p>
+  ${eqs.length?`<table><tr><th>Equipamento</th><th>Classe</th><th>kWh/ano</th><th></th><th class="right">Custo/ano</th></tr>
+  ${eqs.map(e=>`<tr>
+    <td><a href="#" onclick='go({name:"ficha",id:"${e.id}",tab:"tecnica"});return false'>${esc(e.nome)}</a></td>
+    <td>${esc(e.classeEnergetica)||"—"}</td><td>${e.consumoAnualKwh}</td>
+    <td style="min-width:120px"><div style="height:8px;border-radius:4px;background:var(--accent);width:${Math.max(4,Math.round(e.consumoAnualKwh/max*100))}%"></div></td>
+    <td class="right">${fmtEur(e.consumoAnualKwh*DB.settings.tarifaKwh)}</td></tr>`).join("")}
+  <tr><td colspan="4"><b>Total estimado</b></td><td class="right"><b>${fmtEur(total)}</b></td></tr></table>`
+  :`<div class="empty">Ainda sem dados de consumo.<br>Preenche o campo "Consumo anual (kWh)" nas fichas — vem nas etiquetas energéticas.</div>`}
+  </div>`;
+}
+/* ================= DEFINIÇÕES ================= */
+function vDefs(){
+  const listaEd=(key,titulo)=>`<div class="card"><h2>${titulo}</h2>
+    ${DB.settings[key].map((c,i)=>`<div class="item-row"><input value="${esc(c)}" onchange='DB.settings["${key}"][${i}]=this.value;save()' style="flex:1"><button class="btn small danger" onclick='if(confirm("Remover?")){DB.settings["${key}"].splice(${i},1);save();render()}'>✕</button></div>`).join("")}
+    <button class="btn small mt" onclick='DB.settings["${key}"].push("Nova");save();render()'>＋ Adicionar</button></div>`;
+  const syncCard=FS_OK?`<div class="card"><h2>🔄 Sincronização por ficheiro</h2>
+    ${FILE_HANDLE?`<p>Ligado a <b>${esc(FILE_HANDLE.name)}</b> — todas as alterações são gravadas automaticamente nesse ficheiro. Se ele estiver numa pasta iCloud/Google Drive, o backup na nuvem é automático.</p><button class="btn danger" onclick="desligarFicheiro()">Desligar</button>`
+    :`<p class="muted">Liga a app ao ficheiro <b>casa-equipamentos-dados.json</b> (idealmente numa pasta iCloud Drive ou Google Drive): a app lê-o ao abrir e grava nele a cada alteração — sem exportar/importar manual.</p><button class="btn primary" onclick="ligarFicheiro()">🔗 Ligar ficheiro de dados</button>`}
+  </div>`:``;
+  const nuvemCard=`<div class="card"><h2>☁️ Sincronização na nuvem</h2>
+    ${nuvemCfgOk()
+      ?`<p>Ligado a <b>${esc(NUVEM.user)}/${esc(NUVEM.repo)}</b> · ${esc(NUVEM_ESTADO.txt||"ainda sem sincronização nesta sessão")}</p>
+        <p class="muted">Os dados são encriptados neste aparelho antes de serem enviados — só quem tem a palavra-passe da casa os consegue ler.</p>
+        <button class="btn primary" onclick="nuvemPull(true)">Sincronizar agora</button>
+        <button class="btn" onclick="nuvemConfigurar()">Alterar configuração</button>
+        <button class="btn danger" onclick="nuvemDesligar()">Desligar</button>`
+      :`<p class="muted">Sincroniza os dados entre Mac, iPhone e iPad através de um repositório privado no GitHub, com encriptação ponta-a-ponta. Precisas dos 4 dados indicados no guia de publicação.</p>
+        <button class="btn primary" onclick="nuvemConfigurar()">Configurar sincronização</button>`}
+  </div>`;
+  return nuvemCard+syncCard+`
+  <div class="card"><h2>💾 Backup e dados</h2>
+    <p class="muted">Os dados vivem apenas neste browser. Exporta regularmente e guarda o ficheiro em local seguro. Para usar noutro dispositivo, exporta aqui e importa lá. No Chrome/Edge, o Exportar deixa-te escolher a pasta de destino.</p>
+    <button class="btn primary" onclick="exportarJSON()">⬇ Exportar dados (JSON)</button>
+    <button class="btn" onclick="$('#importFile').click()">⬆ Importar dados</button>
+    <button class="btn" onclick="window.print()">🖨 Imprimir inventário</button>
+    <button class="btn danger" onclick="reporTudo()">Repor tudo</button>
+  </div>
+  <div class="card"><h2>⚡ Tarifa de energia</h2>
+    <label>€/kWh</label><input type="number" step="0.001" style="max-width:160px" value="${DB.settings.tarifaKwh}" onchange="DB.settings.tarifaKwh=Number(this.value)||0;save()">
+  </div>
+  ${listaEd("categorias","Categorias")}
+  ${listaEd("compartimentos","Compartimentos")}
+  ${listaEd("tipos","Tipos")}`;
+}
+async function exportarJSON(){
+  const nome="casa-equipamentos-backup-"+new Date().toISOString().slice(0,10)+".json";
+  const dados=JSON.stringify(DB,null,2);
+  if("showSaveFilePicker" in window){
+    try{
+      const h=await window.showSaveFilePicker({suggestedName:nome,types:[{description:"Dados da app (JSON)",accept:{"application/json":[".json"]}}]});
+      const w=await h.createWritable();await w.write(dados);await w.close();
+      alert("Exportado para: "+h.name);return;
+    }catch(e){if(e.name==="AbortError")return;}
+  }
+  const blob=new Blob([dados],{type:"application/json"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);
+  a.download=nome;a.click();
+}
+$("#importFile") && ($("#importFile").onchange=function(){
+  const f=this.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=ev=>{try{
+    const d=JSON.parse(ev.target.result);
+    if(!d.equipamentos||!d.settings)throw new Error("Formato inválido");
+    if(confirm("Importar "+d.equipamentos.length+" equipamentos? Os dados atuais serão substituídos.")){DB=d;save();render();alert("Importado com sucesso.");}
+  }catch(err){alert("Erro ao importar: "+err.message);}};
+  r.readAsText(f);this.value="";
+});
+function reporTudo(){
+  if(confirm("Apagar TODOS os dados e repor a lista inicial? Faz um backup primeiro!")&&confirm("Confirmas mesmo?")){localStorage.removeItem(LS_KEY);load();render();}
+}
+/* ===== SINCRONIZAÇÃO POR FICHEIRO (File System Access API) ===== */
+let FILE_HANDLE=null,FS_TIMER=null,PEDIR_RETOMA=false;
+const FS_OK=typeof window!=="undefined"&&"showOpenFilePicker" in window;
+function idb(){return new Promise((res,rej)=>{const q=indexedDB.open("casaEquipFS",1);q.onupgradeneeded=()=>q.result.createObjectStore("h");q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error);});}
+async function idbSet(k,v){const d=await idb();return new Promise((res,rej)=>{const t=d.transaction("h","readwrite");t.objectStore("h").put(v,k);t.oncomplete=res;t.onerror=()=>rej(t.error);});}
+async function idbGet(k){const d=await idb();return new Promise((res,rej)=>{const t=d.transaction("h","readonly");const r=t.objectStore("h").get(k);r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);});}
+async function ligarFicheiro(){
+  if(!FS_OK){alert("O Safari não suporta ligação direta a ficheiros. Continua a usar Exportar/Importar aqui, ou abre esta app no Chrome/Edge para gravação automática no ficheiro.");return;}
+  try{
+    const [h]=await window.showOpenFilePicker({types:[{description:"Dados da app (JSON)",accept:{"application/json":[".json"]}}]});
+    if(await h.requestPermission({mode:"readwrite"})!=="granted")return;
+    let adotou=false;
+    try{const d=JSON.parse(await (await h.getFile()).text());
+      if(d.equipamentos&&d.settings&&confirm("Usar os dados deste ficheiro ("+d.equipamentos.length+" equipamentos) como fonte principal? (Cancelar mantém os dados atuais e grava-os por cima do ficheiro)")){DB=d;localStorage.setItem(LS_KEY,JSON.stringify(DB));adotou=true;}
+    }catch(e){/* ficheiro vazio/novo */}
+    FILE_HANDLE=h;await idbSet("dataFile",h);
+    if(!adotou)await fileWrite();
+    PEDIR_RETOMA=false;render();
+  }catch(e){if(e.name!=="AbortError")alert("Não foi possível ligar: "+e.message);}
+}
+async function desligarFicheiro(){FILE_HANDLE=null;PEDIR_RETOMA=false;await idbSet("dataFile",null);render();}
+async function fileWrite(){
+  if(!FILE_HANDLE)return;
+  try{const w=await FILE_HANDLE.createWritable();await w.write(JSON.stringify(DB,null,2));await w.close();}
+  catch(e){console.warn("Gravação no ficheiro falhou:",e);}
+}
+function fileWriteDeb(){if(typeof FILE_HANDLE==="undefined"||!FILE_HANDLE)return;clearTimeout(FS_TIMER);FS_TIMER=setTimeout(fileWrite,600);}
+async function retomarFicheiro(){
+  const h=await idbGet("dataFile");if(!h){PEDIR_RETOMA=false;render();return;}
+  if(await h.requestPermission({mode:"readwrite"})!=="granted")return;
+  try{const d=JSON.parse(await (await h.getFile()).text());if(d.equipamentos&&d.settings){DB=d;localStorage.setItem(LS_KEY,JSON.stringify(DB));}}catch(e){}
+  FILE_HANDLE=h;PEDIR_RETOMA=false;render();
+}
+async function arranqueFicheiro(){
+  if(!FS_OK)return;
+  try{
+    const h=await idbGet("dataFile");if(!h)return;
+    if(await h.queryPermission({mode:"readwrite"})==="granted"){
+      try{const d=JSON.parse(await (await h.getFile()).text());if(d.equipamentos&&d.settings){DB=d;localStorage.setItem(LS_KEY,JSON.stringify(DB));}}catch(e){}
+      FILE_HANDLE=h;render();
+    }else{PEDIR_RETOMA=true;render();}
+  }catch(e){}
+}
+/* ===== SINCRONIZAÇÃO NA NUVEM (GitHub + encriptação AES-GCM) ===== */
+const NUVEM_KEY="casaEquip_nuvem";
+let NUVEM={user:"",repo:"",token:"",pass:""};
+try{Object.assign(NUVEM,JSON.parse(localStorage.getItem(NUVEM_KEY))||{})}catch(e){}
+let NUVEM_ESTADO={txt:"",ok:null};
+let NUVEM_TIMER=null,NUVEM_SHA=null,NUVEM_BUSY=false,NUVEM_ULTPULL=0;
+const nuvemCfgOk=()=>!!(NUVEM.user&&NUVEM.repo&&NUVEM.token&&NUVEM.pass);
+function nuvemGravarCfg(){localStorage.setItem(NUVEM_KEY,JSON.stringify(NUVEM));}
+function syncDot(){const el=document.getElementById("syncdot");if(!el)return;
+  el.textContent=nuvemCfgOk()?(NUVEM_ESTADO.ok===false?"⚠️":NUVEM_ESTADO.ok===true?"☁️":"⏳"):"";
+  el.title=NUVEM_ESTADO.txt||"";}
+const b64buf=a=>btoa(String.fromCharCode(...new Uint8Array(a)));
+const unb64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+async function nuvemChave(pass,salt){
+  const base=await crypto.subtle.importKey("raw",new TextEncoder().encode(pass),"PBKDF2",false,["deriveKey"]);
+  return crypto.subtle.deriveKey({name:"PBKDF2",salt,iterations:210000,hash:"SHA-256"},base,{name:"AES-GCM",length:256},false,["encrypt","decrypt"]);
+}
+async function nuvemCifrar(txt,pass){
+  const salt=crypto.getRandomValues(new Uint8Array(16)),iv=crypto.getRandomValues(new Uint8Array(12));
+  const k=await nuvemChave(pass,salt);
+  const ct=await crypto.subtle.encrypt({name:"AES-GCM",iv},k,new TextEncoder().encode(txt));
+  return{v:1,salt:b64buf(salt),iv:b64buf(iv),ct:b64buf(ct)};
+}
+async function nuvemDecifrar(p,pass){
+  const k=await nuvemChave(pass,unb64(p.salt));
+  const pt=await crypto.subtle.decrypt({name:"AES-GCM",iv:unb64(p.iv)},k,unb64(p.ct));
+  return new TextDecoder().decode(pt);
+}
+const nuvemUrl=()=>`https://api.github.com/repos/${NUVEM.user}/${NUVEM.repo}/contents/dados.enc.json`;
+const nuvemHead=()=>({Authorization:"Bearer "+NUVEM.token,Accept:"application/vnd.github+json","X-GitHub-Api-Version":"2022-11-28"});
+async function nuvemLerRemoto(){
+  const r=await fetch(nuvemUrl()+"?t="+Date.now(),{headers:nuvemHead(),cache:"no-store"});
+  if(r.status===404){NUVEM_SHA=null;return null;}
+  if(r.status===401||r.status===403)throw new Error("token inválido ou sem permissões ("+r.status+")");
+  if(!r.ok)throw new Error("GitHub respondeu "+r.status);
+  const j=await r.json();NUVEM_SHA=j.sha;
+  return JSON.parse(new TextDecoder().decode(unb64(j.content.replace(/\s/g,""))));
+}
+async function nuvemPull(interativo){
+  if(!nuvemCfgOk())return;
+  NUVEM_ULTPULL=Date.now();
+  try{
+    NUVEM_ESTADO={txt:"A verificar a nuvem…",ok:null};syncDot();
+    const p=await nuvemLerRemoto();
+    if(p){
+      let d;
+      try{d=JSON.parse(await nuvemDecifrar(p,NUVEM.pass));}
+      catch(e){throw new Error("palavra-passe de encriptação errada?");}
+      if(d.equipamentos&&d.settings){
+        const remTs=d.syncTs||"",locTs=DB.syncTs||"";
+        if(remTs>locTs){
+          if(d.seedV!==SEED_V){DB=migrar({seedV:SEED_V,settings:JSON.parse(JSON.stringify(DEFAULTS)),equipamentos:seed()},d);DB.syncTs=new Date().toISOString();}
+          else DB=d;
+          localStorage.setItem(LS_KEY,JSON.stringify(DB));render();
+        }else if(locTs>remTs){await nuvemPush();return;}
+      }
+    }else{await nuvemPush();return;}
+    NUVEM_ESTADO={txt:"Sincronizado às "+new Date().toLocaleTimeString("pt-PT",{hour:"2-digit",minute:"2-digit"}),ok:true};syncDot();
+  }catch(e){
+    NUVEM_ESTADO={txt:"Falha: "+e.message,ok:false};syncDot();
+    if(interativo)alert("Sincronização falhou — "+e.message);
+  }
+}
+async function nuvemPush(){
+  if(!nuvemCfgOk()||NUVEM_BUSY)return;NUVEM_BUSY=true;
+  try{
+    NUVEM_ESTADO={txt:"A enviar para a nuvem…",ok:null};syncDot();
+    const payload=await nuvemCifrar(JSON.stringify(DB),NUVEM.pass);
+    payload.ts=DB.syncTs||new Date().toISOString();payload.n=DB.equipamentos.length;
+    const body={message:"Atualização "+payload.ts,content:btoa(unescape(encodeURIComponent(JSON.stringify(payload))))};
+    if(NUVEM_SHA)body.sha=NUVEM_SHA;
+    let r=await fetch(nuvemUrl(),{method:"PUT",headers:nuvemHead(),body:JSON.stringify(body)});
+    if(r.status===409||r.status===422){
+      await nuvemLerRemoto();
+      if(NUVEM_SHA)body.sha=NUVEM_SHA;else delete body.sha;
+      r=await fetch(nuvemUrl(),{method:"PUT",headers:nuvemHead(),body:JSON.stringify(body)});
+    }
+    if(r.status===401||r.status===403)throw new Error("token inválido ou sem permissões ("+r.status+")");
+    if(!r.ok)throw new Error("GitHub respondeu "+r.status);
+    const j=await r.json();if(j.content&&j.content.sha)NUVEM_SHA=j.content.sha;
+    NUVEM_ESTADO={txt:"Sincronizado às "+new Date().toLocaleTimeString("pt-PT",{hour:"2-digit",minute:"2-digit"}),ok:true};syncDot();
+  }catch(e){NUVEM_ESTADO={txt:"Falha ao enviar: "+e.message,ok:false};syncDot();}
+  finally{NUVEM_BUSY=false;}
+}
+function nuvemPushDeb(){if(typeof NUVEM==="undefined"||!nuvemCfgOk())return;clearTimeout(NUVEM_TIMER);NUVEM_TIMER=setTimeout(nuvemPush,2500);}
+async function nuvemConfigurar(){
+  alert("Vais precisar de 4 dados (ver guia): utilizador GitHub, nome do repositório privado de dados, token de acesso e a palavra-passe de encriptação da casa.");
+  const u=prompt("1/4 · Utilizador GitHub:",NUVEM.user||"");if(u==null)return;
+  const r=prompt("2/4 · Repositório privado de dados:",NUVEM.repo||"casa-dados");if(r==null)return;
+  const t=prompt("3/4 · Token de acesso (fine-grained, Contents: Read and write):",NUVEM.token||"");if(t==null)return;
+  const p=prompt("4/4 · Palavra-passe de encriptação (tem de ser IGUAL em todos os aparelhos):",NUVEM.pass||"");if(p==null)return;
+  NUVEM={user:u.trim(),repo:r.trim(),token:t.trim(),pass:p};nuvemGravarCfg();syncDot();
+  await nuvemPull(true);render();
+}
+function nuvemDesligar(){
+  if(!confirm("Desligar a sincronização neste aparelho? (Os dados locais e da nuvem não são apagados.)"))return;
+  NUVEM={user:"",repo:"",token:"",pass:""};nuvemGravarCfg();NUVEM_ESTADO={txt:"",ok:null};syncDot();render();
+}
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&nuvemCfgOk()&&Date.now()-NUVEM_ULTPULL>60000)nuvemPull();});
+window.addEventListener("online",()=>{if(nuvemCfgOk())nuvemPull();});
+if("serviceWorker" in navigator&&location.protocol==="https:")navigator.serviceWorker.register("sw.js").catch(()=>{});
+/* ================= ARRANQUE ================= */
+load();render();arranqueFicheiro();syncDot();if(nuvemCfgOk())nuvemPull();
+</script>
+</body>
+</html>
