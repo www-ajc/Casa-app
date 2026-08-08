@@ -122,12 +122,12 @@ function aplicarPrefs(){
 }
 function gravarPrefs(){localStorage.setItem(PREFS_KEY,JSON.stringify(PREFS));aplicarPrefs();}
 aplicarPrefs();
-const SEED_V="2026-08-08.22"; // versão dos dados publicados pelo Claude — incrementar a cada atualização
+const SEED_V="2026-08-08.27"; // versão dos dados publicados pelo Claude — incrementar a cada atualização
 const DEFAULTS={
   tarifaKwh:0.17,
   categorias:["Cozinha","Lavandaria","Climatização e águas","Exterior","Entretenimento","Informática e mobilidade","Pequenos eletrodomésticos","Outros"],
   tipos:["Grande eletrodoméstico","Pequeno eletrodoméstico","Climatização/AQS","Eletrónica","Rede/Informática","Exterior/Jardim","Outro"],
-  compartimentos:["Cozinha","Lavandaria","Sala","Quarto","Escritório","Casa técnica","Casa de banho","Exterior/Jardim","Piscina","Portátil/Vários"]
+  compartimentos:["Cozinha","Lavandaria","Sala","Quarto","Escritório","Casa técnica","Casa de banho","Arrumos I","Arrumos II","Exterior/Jardim","Piscina","Portátil/Vários"]
 };
 const ICONES={"Cozinha":"🍽️","Lavandaria":"🧺","Climatização e águas":"🌡️","Exterior":"🌿","Entretenimento":"📺","Informática e mobilidade":"💻","Pequenos eletrodomésticos":"🔌","Outros":"📦"};
 function novoEquip(p){return Object.assign({
@@ -293,7 +293,18 @@ function seed(){
       siteRegisto:"https://www.daikin.pt/pt_pt/contactos.html",
       rede:"Nenhuma",appFabricante:"Daikin Onecta (requer placa WLAN opcional)",apiDisponivel:"Sim — Onecta API (integração Home Assistant)",compatibilidades:"Home Assistant (via Onecta)",estadoIot:"Não ligado",
       manutencoes:[{tarefa:"Verificação técnica anual (obrigatória p/ garantia)",freqMeses:12,ultima:"",consumivel:""},{tarefa:"Verificar pressão do circuito e caudal no MMI",freqMeses:6,ultima:"",consumivel:""},{tarefa:"Limpar filtro magnético/malha do circuito",freqMeses:12,ultima:"",consumivel:""}]}),
-    novoEquip({nome:"VMC — Ventilação mecânica central",categoria:"Climatização e águas",tipo:"Climatização/AQS",compartimento:"Casa técnica",consumoAnualKwh:350,notas:"Consumo anual 350 kWh: estimativa (ventilação contínua ~40 W) — corrigir quando registarmos marca/modelo.",manutencoes:[{tarefa:"Substituir/limpar filtros",freqMeses:6,ultima:"",consumivel:""}]}),
+    novoEquip({nome:"VMC — Ventilação mecânica central",categoria:"Climatização e águas",tipo:"Climatização/AQS",compartimento:"Casa técnica",utilidade:"Ventilação mecânica controlada com recuperação de calor (VMC de duplo fluxo)",
+      marca:"Soler & Palau (S&P)",modelo:"SABIK 350",referencia:"Code 5153139200-02 · Produção 0123 (jan/2023) · Made in Europe · IP21 · Configuração Versão A · esquema ref. 9019057202",numeroSerie:"1016427994",
+      caracteristicas:"Unidade de ventilação de duplo fluxo com recuperação de calor · Caudal nominal 350 m³/h · Permutador de alta eficiência · Comando tátil com 3 velocidades, modo automático e funções especiais · Temperatura máx. de funcionamento 50 °C · Fabricante: S&P Sistemas de Ventilación S.L.U., C/ Llevant 4, ES-08150 Parets del Vallès (Barcelona)",
+      consumoAnualKwh:260,classeEnergetica:"",
+      ligacoes:"220–240 V~ · 50/60 Hz · Pmáx 145 W · Imáx 0,98 A",
+      comoFazer:"Comando tátil (ícones): 💤 Zzz = velocidade mínima/noturno · A = modo automático · ☀️🏠 = ventilação intensiva/free-cooling (arrefecimento noturno) · 🍸 = modo festa/boost temporário. As 3 barras azuis ao centro mostram a velocidade ativa. Filtros: verificar de 6 em 6 meses e substituir quando saturados (a unidade avisa). INSTALAÇÃO: configurada em Versão A (dip-switch nº 5 = ON; B = OFF) — ver autocolante do esquema na unidade, ref. 9019057202. As 4 bocas no topo são: admissão de ar exterior, extração do ar interior (viciado), insuflação de ar novo para a casa e expulsão para o exterior. O dreno de condensados TEM de ter sifão em U com água (o esquema assinala com X a ligação sem sifão) — verificar anualmente se está desobstruído e com guarda de água.",
+      notas:"Consumo anual 260 kWh: estimativa (funcionamento contínuo em velocidade baixa/média, ~30 W médios; Pmáx 145 W). Confirmar referência dos filtros de substituição com o instalador ou no manual S&P.",
+      links:[{label:"Página do produto SABIK (S&P)",url:"https://www.solerpalau.com/pt-pt/sabik/"},{label:"Documentação e manuais S&P",url:"https://www.solerpalau.com/pt-pt/descargas/"},{label:"S&P Portugal — contactos",url:"https://www.solerpalau.com/pt-pt/contacto/"}],
+      contactoFabricante:"S&P Sistemas de Ventilación S.L.U. · C/ Llevant 4, ES-08150 Parets del Vallès (Barcelona) · www.solerpalau.com",
+      contactoAssistencia:"Instalador de AVAC (preencher) · S&P Portugal via solerpalau.com/pt-pt/contacto",
+      rede:"Nenhuma",appFabricante:"",apiDisponivel:"Não",compatibilidades:"",estadoIot:"Não ligado",
+      manutencoes:[{tarefa:"Verificar/substituir filtros",freqMeses:6,ultima:"",consumivel:"Filtros S&P SABIK 350 (confirmar referência)"},{tarefa:"Limpar permutador e verificar condensados",freqMeses:12,ultima:"",consumivel:""}]}),
     novoEquip({nome:"Bomba de calor da piscina",categoria:"Exterior",tipo:"Exterior/Jardim",compartimento:"Piscina",utilidade:"Aquecimento (e arrefecimento) da água da piscina",
       marca:"AquaX",modelo:"TurboSilence Inverter TSC40T",referencia:"Etiqueta 6020 · TÜV Rheinland ID 1111253628",numeroSerie:"828103781240343022",
       caracteristicas:"Bomba de calor inverter para piscina · Aquecimento 40 kW (Turbo) / 35 kW (Smart) a ar 26 °C/água 26 °C · 28/24 kW a ar 15 °C · Arrefecimento 16 kW · COP 15,8–6,4 (11,1 a 50% de capacidade — classe A) · Pressão sonora 42,5–51,7 dB(A) a 1 m (43,8 a 50%) · Caudal de água aconselhado 12–18 m³/h · Refrigerante R32 3200 g (GWP 675 · 2,16 t CO₂eq — contém gases fluorados) · IPX4 · 126 kg",
@@ -342,7 +353,31 @@ function seed(){
       caracteristicas:"1 Corte geral · 2 Quadro parcial Piso 1 · 3 Quadro parcial Garagem · 4 Quadro parcial Anexo · 5 Geral exterior · 6 Iluminação exterior · 7 Tomada cozinha/churrasqueira · 8 Vídeo porteiro · 9 Geral · 10 Painel solar (resistência) · 11 Painel solar (+ depósito) · 12 Máq. lavar roupa · 13 Painel solar (bomba circuladora/recirculação) · 14 Tomadas lavandaria · 15 Máq. secar roupa · 16 Tomadas sala estar · 17 Tomadas hall entrada/WC/corredor · 18 Tomadas sala jantar · 19 Elevador · 20 Iluminação roupeiro · 21 Piso radiante lavandaria · 22 Micro-ondas · 23 Forno · 24 Piso radiante corredor · 25 Frigorífico/arca vertical · 26 Bomba de calor · 27 A.T.I. · 28 Intrusão · 29 V.C. sala estar · 30 V.C. hall entrada · 31 V.C. sala jantar · 32 Vinoteca · 33 Máq. lavar loiça · 34 Placa · 35 V.C. cozinha · 36 Forno-copa · 37 Máq. secar roupa · 38 CCTV · 39 Iluminação · 40 Estores · 41 Domótica · 42 Iluminação · 43 Reserva",
       notas:"Transcrito da lista manuscrita afixada no quadro (fotos 08/2026). V.C. = ventiloconvector (a confirmar). Nº 37 'Máq. secar roupa' repete o nº 15 — confirmar qual é o efetivo.",
       manutencoes:[{tarefa:"Testar botão de teste dos diferenciais",freqMeses:6,ultima:"",consumivel:""}]}),
-    novoEquip({nome:"Aspirador",categoria:"Pequenos eletrodomésticos",tipo:"Pequeno eletrodoméstico",compartimento:"Portátil/Vários",consumoAnualKwh:25,notas:"Consumo anual 25 kWh: estimativa (~1 h/semana, ~500 W) — corrigir quando registarmos marca/modelo.",manutencoes:[{tarefa:"Limpar/substituir filtros",freqMeses:6,ultima:"",consumivel:""}]}),
+    novoEquip({nome:"Aspirador",categoria:"Pequenos eletrodomésticos",tipo:"Pequeno eletrodoméstico",compartimento:"Portátil/Vários",utilidade:"Aspirador vertical sem fios (principal)",
+      marca:"Dyson",modelo:"V15 Detect (SV47)",referencia:"Plataforma SV47 (versão 2023+) · Made in China",numeroSerie:"5DJ-EU-UCV2054A",
+      caracteristicas:"Aspirador vertical sem fios · Deteção laser de pó fino (Fluffy Optic) e sensor piezoelétrico com contagem de partículas no visor LCD · Escova anti-emaranhamento para cabelos · Filtração HEPA integral · Bateria de lítio 25,2 V · 3600 mAh · 91 Wh (7 células) · Fabricante: Dyson Technology Limited, Malmesbury, Reino Unido",
+      consumoAnualKwh:15,
+      ligacoes:"Carregador Dyson (usar apenas o carregador original) · Bateria 25,2 V / 91 Wh",
+      comoFazer:"Lavar o filtro em água fria (sem detergente) e deixar secar 24 h antes de recolocar. Limpar o cabelo enrolado na escova quando necessário. Guardar a bateria à temperatura ambiente; carregar apenas com o carregador Dyson original.",
+      notas:"Consumo anual 15 kWh: estimativa (carregamentos). Registar o nº de série 5DJ-EU-UCV2054A em dyson.pt para ativar a garantia (normalmente 2 anos).",
+      links:[{label:"Suporte Dyson (introduzir nº de série)",url:"https://www.dyson.pt/suporte"},{label:"Peças e filtros Dyson",url:"https://www.dyson.pt/pecas-suplentes"}],
+      contactoFabricante:"Dyson Technology Limited · Tetbury Hill, Malmesbury SN16 0RP, Reino Unido",
+      contactoAssistencia:"Linha de apoio Dyson Portugal: 800 784 355 · www.dyson.pt/suporte",
+      siteRegisto:"https://www.dyson.pt/registar-produto",
+      rede:"Nenhuma",appFabricante:"MyDyson (modelos compatíveis)",apiDisponivel:"Não",compatibilidades:"",estadoIot:"Não ligado",
+      manutencoes:[{tarefa:"Lavar filtro (secar 24 h)",freqMeses:1,ultima:"",consumivel:""},{tarefa:"Limpar escova e canais de sucção",freqMeses:6,ultima:"",consumivel:""}]}),
+    novoEquip({nome:"Frigorífico secundário",categoria:"Cozinha",tipo:"Grande eletrodoméstico",compartimento:"Arrumos II",utilidade:"Frigorífico combinado de apoio, nos Arrumos II",
+      marca:"Becken (Worten)",modelo:"BDD5394",referencia:"Batch BC05U · Código 4177830 / 4181017",numeroSerie:"VB0250Z0072JBC05US40486",
+      caracteristicas:"Frigorífico combinado de 2 portas · Frigorífico 197 L + congelador 52 L (total 249 L) · Comando eletrónico com visor (SUPER congelação e regulação de temperatura) · Capacidade de congelação 2 kg/24 h · Autonomia em falha de energia 12 h · Classe climática N/ST/T · Refrigerante R600a (32 g) · Agente expansor ciclopentano · Distribuído por Worten, Equipamentos para o Lar S.A.",
+      classeEnergetica:"E",consumoAnualKwh:192,ruidoDb:41,
+      ligacoes:"220–240 V~ · 50 Hz · 1,0 A · Lâmpada LED 1 W · Classe de proteção I",
+      comoFazer:"Painel eletrónico: botão SUPER (❄) ativa a congelação rápida; botão TEMP regula a temperatura (visor em °C). Congelador tipicamente a −18 °C.",
+      notas:"Garantia: Worten (guardar talão de compra).",
+      links:[{label:"Apoio Worten / Becken",url:"https://www.worten.pt/apoio-cliente"}],
+      contactoFabricante:"Worten, Equipamentos para o Lar S.A. · Rua João Mendonça 505, 4464-503 Senhora da Hora",
+      contactoAssistencia:"Apoio ao cliente Worten · www.worten.pt/apoio-cliente",
+      rede:"Nenhuma",appFabricante:"",apiDisponivel:"Não",compatibilidades:"",estadoIot:"Não ligado",
+      manutencoes:[{tarefa:"Limpar grelha de ventilação traseira e vedantes",freqMeses:6,ultima:"",consumivel:""},{tarefa:"Verificar temperatura e descongelar se necessário",freqMeses:12,ultima:"",consumivel:""}]}),
     novoEquip({nome:"Ferro de engomar",categoria:"Lavandaria",tipo:"Pequeno eletrodoméstico",compartimento:"Lavandaria",utilidade:"Ferro de engomar a vapor",
       marca:"Braun",modelo:"SI 3055 BK (SuperCeramic, FreeGlide 3D)",referencia:"Type 12730011 · Made in China · De'Longhi Braun Household GmbH",numeroSerie:"33031 S900098",
       caracteristicas:"Ferro a vapor 2000\u20132400 W \u00b7 Base SuperCeramic (FreeGlide 3D, ponta afinada) \u00b7 Jato de vapor e vapor vertical \u00b7 Anticalc\u00e1rio e sistema antipingo \u00b7 Desliga\u2011se automaticamente",
