@@ -122,7 +122,7 @@ function aplicarPrefs(){
 }
 function gravarPrefs(){localStorage.setItem(PREFS_KEY,JSON.stringify(PREFS));aplicarPrefs();}
 aplicarPrefs();
-const SEED_V="2026-08-08.27"; // versão dos dados publicados pelo Claude — incrementar a cada atualização
+const SEED_V="2026-08-08.29"; // versão dos dados publicados pelo Claude — incrementar a cada atualização
 const DEFAULTS={
   tarifaKwh:0.17,
   categorias:["Cozinha","Lavandaria","Climatização e águas","Exterior","Entretenimento","Informática e mobilidade","Pequenos eletrodomésticos","Outros"],
@@ -147,10 +147,10 @@ function seed(){
   const mk=(nome,categoria,tipo,compartimento,manut)=>novoEquip({nome,categoria,tipo,compartimento,manutencoes:manut||[]});
   return [
     novoEquip({nome:"Máquina de lavar loiça",categoria:"Cozinha",tipo:"Grande eletrodoméstico",compartimento:"Cozinha",
-      marca:"Siemens (iQ700)",modelo:"SN87TX02CE/45",referencia:"Type SD6PW1S · FD 0504 (fab. abr/2025)",numeroSerie:"015040396…(confirmar na etiqueta)",
+      marca:"Siemens (iQ700)",modelo:"SN87TX02CE/45",referencia:"Type SD6PW1S · FD 0504 (fab. abr/2025) · Z-Nr 00052 · Made in Germany",numeroSerie:"015040396330000523",
       caracteristicas:"Totalmente integrável 60 cm · 14 conjuntos · 598×550×815 mm · Secagem Zeolith, varioSpeed Plus, glassZone, emotionLight · Programas: Eco 50°, Auto 45–65°, Intensivo 70°, Rápido 60°, Silence, Hygiene+ · Fabricante: BSH Hausgeräte GmbH, Made in Germany",
       classeEnergetica:"A",consumoAnualKwh:112,consumoCicloKwh:0.54,consumoAgua:"9,5 L/ciclo",ruidoDb:42,
-      ligacoes:"220–240 V · 50–60 Hz · 2000–2400 W · 10 A · água fria + esgoto",
+      ligacoes:"220–240 V · 50–60 Hz · 2000–2400 W · 10–16 A · água fria + esgoto",
       links:[{label:"Página do produto (Siemens PT)",url:"https://www.siemens-home.bsh-group.com/pt/pt/mkt-product/maquinas-de-lavar-loica/maquinas-de-lavar-loica-de-integrar/maquinas-de-lavar-loica-totalmente-integraveis/fully-integrated-60-cm-width/SN87TX02CE"},{label:"Manuais e apoio (pesquisar E-Nr)",url:"https://www.siemens-home.bsh-group.com/pt/apoio-ao-consumidor/apoio"},{label:"Agendar reparação",url:"https://www.siemens-home.bsh-group.com/pt/apoio-ao-consumidor/reparacao/agendar-reparacao"}],
       contactoFabricante:"BSH/Siemens PT · Rua do Alto do Montijo 15, 2790-012 Carnaxide",
       contactoAssistencia:"214 250 720 · peças: bshp.pecas@bshg.com",
@@ -436,9 +436,9 @@ function seed(){
       rede:"Wi-Fi",appFabricante:"—",apiDisponivel:"—",compatibilidades:"Ecossistema Apple (iCloud, HomeKit…)",estadoIot:"Ligado, sem controlo na app",
       manutencoes:[]}),
     novoEquip({nome:"Coluna de som portátil",categoria:"Entretenimento",tipo:"Eletrónica",compartimento:"Portátil/Vários",utilidade:"Coluna Bluetooth portátil",
-      marca:"JBL",modelo:"Charge 5",referencia:"Preta · Nº de série na base da coluna (confirmar)",numeroSerie:"",
-      caracteristicas:"Coluna Bluetooth portátil · 40 W RMS (30 W woofer + 10 W tweeter) · IP67 (água e pó) · Bateria 7500 mAh, ~20 h de autonomia · Powerbank integrado (carrega outros dispositivos por USB) · PartyBoost para emparelhar várias colunas JBL",
-      consumoAnualKwh:5,ligacoes:"USB-C (carregamento) · Bluetooth 5.1",notas:"Consumo anual 5 kWh: estimativa (carregamentos).",
+      marca:"JBL",modelo:"Charge 5",referencia:"Preta · FCC ID APIJBLCHARGE5H · CMIIT ID 2020DJ14390 · Made in China",numeroSerie:"ND0792-CM0493429",
+      caracteristicas:"Coluna Bluetooth portátil · 40 W RMS (30 W woofer + 10 W tweeter) · IP67 (água e pó) · Bateria de lítio 3,6 V · 7500 mAh · 27 Wh, ~20 h de autonomia · Powerbank integrado (carrega outros dispositivos por USB) · PartyBoost para emparelhar várias colunas JBL",
+      consumoAnualKwh:5,ligacoes:"USB-C IN 5 V ⎓ 3,0 A (carregamento) · USB-A OUT 5 V ⎓ 2,0 A máx. (powerbank) · Bluetooth 5.1",notas:"Consumo anual 5 kWh: estimativa (carregamentos).",
       links:[{label:"Página do produto (JBL)",url:"https://pt.jbl.com/CHARGE5.html"},{label:"Suporte e manuais JBL",url:"https://support.jbl.com"}],
       contactoFabricante:"Harman International (JBL) · pt.jbl.com",
       rede:"Bluetooth",appFabricante:"JBL Portable",apiDisponivel:"Não",compatibilidades:"",estadoIot:"Não ligado",
