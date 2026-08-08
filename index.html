@@ -122,7 +122,7 @@ function aplicarPrefs(){
 }
 function gravarPrefs(){localStorage.setItem(PREFS_KEY,JSON.stringify(PREFS));aplicarPrefs();}
 aplicarPrefs();
-const SEED_V="2026-08-07.21"; // versão dos dados publicados pelo Claude — incrementar a cada atualização
+const SEED_V="2026-08-08.22"; // versão dos dados publicados pelo Claude — incrementar a cada atualização
 const DEFAULTS={
   tarifaKwh:0.17,
   categorias:["Cozinha","Lavandaria","Climatização e águas","Exterior","Entretenimento","Informática e mobilidade","Pequenos eletrodomésticos","Outros"],
@@ -343,6 +343,18 @@ function seed(){
       notas:"Transcrito da lista manuscrita afixada no quadro (fotos 08/2026). V.C. = ventiloconvector (a confirmar). Nº 37 'Máq. secar roupa' repete o nº 15 — confirmar qual é o efetivo.",
       manutencoes:[{tarefa:"Testar botão de teste dos diferenciais",freqMeses:6,ultima:"",consumivel:""}]}),
     novoEquip({nome:"Aspirador",categoria:"Pequenos eletrodomésticos",tipo:"Pequeno eletrodoméstico",compartimento:"Portátil/Vários",consumoAnualKwh:25,notas:"Consumo anual 25 kWh: estimativa (~1 h/semana, ~500 W) — corrigir quando registarmos marca/modelo.",manutencoes:[{tarefa:"Limpar/substituir filtros",freqMeses:6,ultima:"",consumivel:""}]}),
+    novoEquip({nome:"Ferro de engomar",categoria:"Lavandaria",tipo:"Pequeno eletrodoméstico",compartimento:"Lavandaria",utilidade:"Ferro de engomar a vapor",
+      marca:"Braun",modelo:"SI 3055 BK (SuperCeramic, FreeGlide 3D)",referencia:"Type 12730011 · Made in China · De'Longhi Braun Household GmbH",numeroSerie:"33031 S900098",
+      caracteristicas:"Ferro a vapor 2000\u20132400 W \u00b7 Base SuperCeramic (FreeGlide 3D, ponta afinada) \u00b7 Jato de vapor e vapor vertical \u00b7 Anticalc\u00e1rio e sistema antipingo \u00b7 Desliga\u2011se automaticamente",
+      ligacoes:"220\u2013240 V~ \u00b7 50/60 Hz \u00b7 2000\u20132400 W",
+      consumoAnualKwh:30,
+      comoFazer:"Descalcificar com a fun\u00e7\u00e3o de autolimpeza quando o dep\u00f3sito acumular calc\u00e1rio; usar \u00e1gua da torneira misturada com destilada em zonas de \u00e1gua dura.",
+      notas:"Consumo anual 30 kWh: estimativa (~1 h/semana). Fabricante: De'Longhi Braun Household GmbH, Carl-Ulrich-Stra\u00dfe 4, 63263 Neu-Isenburg, Alemanha.",
+      links:[{label:"Apoio e manuais (Braun Household)",url:"https://uk.braunhousehold.com/en-GB/support"},{label:"P\u00e1gina do produto SI 3055",url:"https://uk.braunhousehold.com/en-GB/ironing"}],
+      contactoFabricante:"De'Longhi Braun Household GmbH \u00b7 braunhousehold.com",
+      contactoAssistencia:"Apoio De'Longhi/Braun PT \u00b7 via braunhousehold.com/support",
+      rede:"Nenhuma",appFabricante:"",apiDisponivel:"N\u00e3o",compatibilidades:"",estadoIot:"N\u00e3o ligado",
+      manutencoes:[{tarefa:"Autolimpeza / descalcifica\u00e7\u00e3o",freqMeses:6,ultima:"",consumivel:""}]}),
     novoEquip({nome:"Aspirador portátil",categoria:"Pequenos eletrodomésticos",tipo:"Pequeno eletrodoméstico",compartimento:"Portátil/Vários",utilidade:"Aspirador de mão sem fios",
       marca:"Bosch",modelo:"Move 14.4V (BHN14N/04)",referencia:"Type VXAS021V14 · FD 0201 (fab. jan/2022) · Z-Nr 008847 · Made in China",numeroSerie:"Z-Nr 008847",
       caracteristicas:"Aspirador de mão sem fios · Bateria 14,4 V · 125 W · Depósito sem saco, filtro lavável · Carregador 22 V / 200 mA · Fabricante: BSH Hausgeräte GmbH (A Bosch Company)",
